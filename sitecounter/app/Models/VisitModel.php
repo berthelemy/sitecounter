@@ -58,11 +58,15 @@ class VisitModel extends Model
      */
     public function getUniqueVisitors(int $websiteId, string $startDate, string $endDate): int
     {
-        return $this->where('website_id', $websiteId)
-                   ->where('timestamp >=', $startDate)
-                   ->where('timestamp <=', $endDate)
-                   ->distinct()
-                   ->countAllResults();
+        $row = $this->db->table('visits')
+                       ->select('COUNT(DISTINCT visitor_id) as count', false)
+                       ->where('website_id', $websiteId)
+                       ->where('timestamp >=', $startDate)
+                       ->where('timestamp <=', $endDate)
+                       ->get()
+                       ->getRowArray();
+
+        return (int) ($row['count'] ?? 0);
     }
 
     /**
