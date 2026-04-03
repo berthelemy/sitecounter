@@ -2,50 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Websites - SiteCounter</title>
+    <title><?= lang('SiteCounter.websites.title') ?> - <?= lang('SiteCounter.app.name') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/dashboard">SiteCounter</a>
+            <a class="navbar-brand" href="/dashboard"><?= lang('SiteCounter.app.name') ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="/dashboard"><?= lang('SiteCounter.nav.dashboard') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard/websites">Websites</a>
+                        <a class="nav-link active" href="/dashboard/websites"><?= lang('SiteCounter.nav.websites') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard/profile">Profile</a>
+                        <a class="nav-link" href="/dashboard/profile"><?= lang('SiteCounter.nav.profile') ?></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item me-2">
-                        <?= lang_switcher() ?>
+                    <li class="nav-item">
+                        <span class="navbar-text me-3"><?= esc(lang('SiteCounter.app.welcome_user', [$user->username])) ?></span>
                     </li>
                     <li class="nav-item">
-                        <span class="navbar-text me-3">Welcome, <?= esc($user->username) ?></span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" href="/logout"><?= lang('SiteCounter.nav.logout') ?></a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <div class="container mt-3 d-flex justify-content-end">
+        <?= lang_switcher() ?>
+    </div>
+
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Websites</h1>
-                    <a href="/dashboard/websites/create" class="btn btn-primary">Add Website</a>
+                    <h1><?= lang('SiteCounter.websites.title') ?></h1>
+                    <a href="/dashboard/websites/create" class="btn btn-primary"><?= lang('SiteCounter.websites.add_website') ?></a>
                 </div>
 
                 <?php if (session()->has('success')): ?>
@@ -67,16 +68,16 @@
                 <div class="card">
                     <div class="card-body">
                         <?php if (empty($websites)): ?>
-                            <p class="text-muted">No websites found. <a href="/dashboard/websites/create">Add your first website</a>.</p>
+                            <p class="text-muted"><?= lang('SiteCounter.websites.no_websites') ?> <a href="/dashboard/websites/create"><?= lang('SiteCounter.websites.add_first_website') ?></a>.</p>
                         <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>URL</th>
-                                            <th>Created</th>
-                                            <th>Actions</th>
+                                            <th><?= lang('SiteCounter.websites.name') ?></th>
+                                            <th><?= lang('SiteCounter.websites.url') ?></th>
+                                            <th><?= lang('SiteCounter.websites.created') ?></th>
+                                            <th><?= lang('SiteCounter.websites.actions') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -86,11 +87,11 @@
                                                 <td><a href="<?= esc($website['url']) ?>" target="_blank"><?= esc($website['url']) ?></a></td>
                                                 <td><?= date('M j, Y', strtotime($website['created_at'])) ?></td>
                                                 <td>
-                                                    <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-sm btn-info">View</a>
-                                                    <a href="/dashboard/websites/<?= $website['id'] ?>/edit" class="btn btn-sm btn-warning">Edit</a>
+                                                    <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-sm btn-info"><?= lang('SiteCounter.websites.view') ?></a>
+                                                    <a href="/dashboard/websites/<?= $website['id'] ?>/edit" class="btn btn-sm btn-warning"><?= lang('SiteCounter.websites.edit') ?></a>
                                                     <form method="post" action="/dashboard/websites/<?= $website['id'] ?>/delete" style="display: inline;">
                                                         <?= csrf_field() ?>
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this website?')">Delete</button>
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('<?= esc(lang('SiteCounter.websites.delete_confirm')) ?>')"><?= lang('SiteCounter.websites.delete') ?></button>
                                                     </form>
                                                 </td>
                                             </tr>

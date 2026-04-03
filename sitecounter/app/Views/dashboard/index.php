@@ -2,77 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - SiteCounter</title>
+    <title><?= lang('SiteCounter.dashboard.title') ?> - <?= lang('SiteCounter.app.name') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/dashboard">SiteCounter</a>
+            <a class="navbar-brand" href="/dashboard"><?= lang('SiteCounter.app.name') ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="/dashboard"><?= lang('SiteCounter.nav.dashboard') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard/websites">Websites</a>
+                        <a class="nav-link" href="/dashboard/websites"><?= lang('SiteCounter.nav.websites') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard/profile">Profile</a>
+                        <a class="nav-link" href="/dashboard/profile"><?= lang('SiteCounter.nav.profile') ?></a>
                     </li>
                 <ul class="navbar-nav">
-                    <li class="nav-item me-2">
-                        <?= lang_switcher() ?>
+                    <li class="nav-item">
+                        <span class="navbar-text me-3"><?= esc(lang('SiteCounter.app.welcome_user', [$fullName])) ?></span>
                     </li>
                     <li class="nav-item">
-                        <span class="navbar-text me-3">Welcome, <?= esc($fullName) ?></span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" href="/logout"><?= lang('SiteCounter.nav.logout') ?></a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <div class="container mt-3 d-flex justify-content-end">
+        <?= lang_switcher() ?>
+    </div>
+
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Dashboard</h4>
+                        <h4><?= lang('SiteCounter.dashboard.title') ?></h4>
                     </div>
                     <div class="card-body">
-                        <p>Welcome to your SiteCounter dashboard!</p>
+                        <p><?= lang('SiteCounter.dashboard.intro') ?></p>
 
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card bg-light">
                                     <div class="card-body text-center">
-                                        <h5>Websites</h5>
-                                        <p class="text-muted">Manage your websites</p>
-                                        <a href="/dashboard/websites" class="btn btn-primary">Manage Websites</a>
+                                        <h5><?= lang('SiteCounter.dashboard.websites_title') ?></h5>
+                                        <p class="text-muted"><?= lang('SiteCounter.dashboard.websites_desc') ?></p>
+                                        <a href="/dashboard/websites" class="btn btn-primary"><?= lang('SiteCounter.dashboard.websites_cta') ?></a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="card bg-light">
                                     <div class="card-body text-center">
-                                        <h5>Reports</h5>
-                                        <p class="text-muted">View analytics</p>
-                                        <a href="/dashboard/websites" class="btn btn-primary">View Reports</a>
+                                        <h5><?= lang('SiteCounter.dashboard.reports_title') ?></h5>
+                                        <p class="text-muted"><?= lang('SiteCounter.dashboard.reports_desc') ?></p>
+                                        <a href="/dashboard/websites" class="btn btn-primary"><?= lang('SiteCounter.dashboard.reports_cta') ?></a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="card bg-light">
                                     <div class="card-body text-center">
-                                        <h5>Settings</h5>
-                                        <p class="text-muted">Configure your account</p>
-                                        <a href="/dashboard/profile" class="btn btn-primary">Profile</a>
+                                        <h5><?= lang('SiteCounter.dashboard.settings_title') ?></h5>
+                                        <p class="text-muted"><?= lang('SiteCounter.dashboard.settings_desc') ?></p>
+                                        <a href="/dashboard/profile" class="btn btn-primary"><?= lang('SiteCounter.dashboard.settings_cta') ?></a>
                                     </div>
                                 </div>
                             </div>

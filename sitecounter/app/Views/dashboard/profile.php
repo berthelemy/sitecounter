@@ -2,47 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile - SiteCounter</title>
+    <title><?= lang('SiteCounter.profile.title') ?> - <?= lang('SiteCounter.app.name') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/dashboard">SiteCounter</a>
+            <a class="navbar-brand" href="/dashboard"><?= lang('SiteCounter.app.name') ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="/dashboard"><?= lang('SiteCounter.nav.dashboard') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard/profile">Profile</a>
+                        <a class="nav-link active" href="/dashboard/profile"><?= lang('SiteCounter.nav.profile') ?></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item me-2">
-                        <?= lang_switcher() ?>
+                    <li class="nav-item">
+                        <span class="navbar-text me-3"><?= esc(lang('SiteCounter.app.welcome_user', [$fullName])) ?></span>
                     </li>
                     <li class="nav-item">
-                        <span class="navbar-text me-3">Welcome, <?= esc($fullName) ?></span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" href="/logout"><?= lang('SiteCounter.nav.logout') ?></a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <div class="container mt-3 d-flex justify-content-end">
+        <?= lang_switcher() ?>
+    </div>
+
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Profile Settings</h4>
+                        <h4><?= lang('SiteCounter.profile.settings_title') ?></h4>
                     </div>
                     <div class="card-body">
                         <?php if (session()->has('success')): ?>
@@ -80,14 +81,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="firstname" class="form-label">First Name</label>
+                                        <label for="firstname" class="form-label"><?= lang('SiteCounter.profile.first_name') ?></label>
                                         <input type="text" class="form-control" id="firstname" name="firstname"
                                                value="<?= old('firstname', $user->firstname ?? '') ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="lastname" class="form-label">Last Name</label>
+                                        <label for="lastname" class="form-label"><?= lang('SiteCounter.profile.last_name') ?></label>
                                         <input type="text" class="form-control" id="lastname" name="lastname"
                                                value="<?= old('lastname', $user->lastname ?? '') ?>" required>
                                     </div>
@@ -95,23 +96,23 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
+                                <label for="email" class="form-label"><?= lang('SiteCounter.profile.email') ?></label>
                                 <input type="email" class="form-control" id="email" name="email"
                                        value="<?= old('email', $user->email) ?>" required>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Username</label>
+                                <label class="form-label"><?= lang('SiteCounter.profile.username') ?></label>
                                 <input type="text" class="form-control" value="<?= esc($user->username) ?>" readonly>
-                                <div class="form-text">Username cannot be changed</div>
+                                <div class="form-text"><?= lang('SiteCounter.profile.username_readonly') ?></div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Update Profile</button>
-                            <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary"><?= lang('SiteCounter.profile.update_profile') ?></button>
+                            <a href="/dashboard" class="btn btn-secondary"><?= lang('SiteCounter.app.cancel') ?></a>
                         </form>
 
                         <hr class="my-4">
-                        <h5>Change Password</h5>
+                        <h5><?= lang('SiteCounter.profile.change_password') ?></h5>
 
                         <?php $passwordErrors = session('password_errors') ?? []; ?>
                         <?php if ($passwordErrors): ?>
@@ -127,40 +128,20 @@
                         <form action="/dashboard/profile/password" method="post">
                             <?= csrf_field() ?>
                             <div class="mb-3">
-                                <label for="current_password" class="form-label">Current Password</label>
+                                <label for="current_password" class="form-label"><?= lang('SiteCounter.profile.current_password') ?></label>
                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
                             </div>
                             <div class="mb-3">
-                                <label for="new_password" class="form-label">New Password</label>
+                                <label for="new_password" class="form-label"><?= lang('SiteCounter.profile.new_password') ?></label>
                                 <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
-                                <div class="form-text">Minimum 8 characters.</div>
+                                <div class="form-text"><?= lang('SiteCounter.profile.password_min') ?></div>
                             </div>
                             <div class="mb-3">
-                                <label for="new_password_confirm" class="form-label">Confirm New Password</label>
+                                <label for="new_password_confirm" class="form-label"><?= lang('SiteCounter.profile.confirm_new_password') ?></label>
                                 <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required minlength="8">
                             </div>
-                            <button type="submit" class="btn btn-warning">Change Password</button>
+                            <button type="submit" class="btn btn-warning"><?= lang('SiteCounter.profile.change_password') ?></button>
                         </form>
-
-                        <?php $supported = config('App')->supportedLocales ?? ['en']; ?>
-                        <?php if (count($supported) > 1): ?>
-                        <hr class="my-4">
-                        <h5>Language Preference</h5>
-                        <form action="/dashboard/profile/language" method="post">
-                            <?= csrf_field() ?>
-                            <div class="mb-3">
-                                <label for="language" class="form-label">Preferred Language</label>
-                                <select class="form-select" id="language" name="language">
-                                    <?php foreach ($supported as $locale): ?>
-                                        <option value="<?= esc($locale) ?>" <?= (service('request')->getLocale() === $locale) ? 'selected' : '' ?>>
-                                            <?= strtoupper(esc($locale)) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-secondary">Save Language</button>
-                        </form>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>

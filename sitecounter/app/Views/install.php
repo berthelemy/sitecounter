@@ -8,6 +8,9 @@
 </head>
 <body class="bg-light">
     <div class="container mt-5">
+        <div class="d-flex justify-content-end mb-3">
+            <?= lang_switcher() ?>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card shadow">

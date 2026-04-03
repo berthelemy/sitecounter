@@ -36,6 +36,21 @@ Events::on('pre_system', static function (): void {
         ob_start(static fn ($buffer) => $buffer);
     }
 
+    if (! is_cli()) {
+        $request = service('request');
+        $supported = config('App')->supportedLocales ?? ['en'];
+        $locale  = $request->getCookie('sitecounter_locale');
+
+        if (! $locale || ! in_array($locale, $supported, true)) {
+            $locale = $request->negotiate('language', $supported);
+        }
+
+        if (in_array($locale, $supported, true)) {
+            $request->setLocale($locale);
+            service('language')->setLocale($locale);
+        }
+    }
+
     /*
      * --------------------------------------------------------------------
      * Debug Toolbar Listeners.
@@ -50,20 +65,6 @@ Events::on('pre_system', static function (): void {
             service('routes')->get('__hot-reload', static function (): void {
                 (new HotReloader())->run();
             });
-        }
-    }
-});
-
-// Apply saved locale preference from cookie on every web request.
-Events::on('pre_controller', static function (): void {
-    if (is_cli()) {
-        return;
-    }
-    $locale = service('request')->getCookie('sitecounter_locale');
-    if ($locale) {
-        $supported = config('App')->supportedLocales ?? ['en'];
-        if (in_array($locale, $supported, true)) {
-            service('request')->setLocale($locale);
         }
     }
 });
