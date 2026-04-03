@@ -63,7 +63,7 @@
                                     <div class="card-body text-center">
                                         <h5>Reports</h5>
                                         <p class="text-muted">View analytics</p>
-                                        <a href="#" class="btn btn-primary">Coming Soon</a>
+                                        <a href="/dashboard/websites" class="btn btn-primary">View Reports</a>
                                     </div>
                                 </div>
                             </div>

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\WebsiteModel;
+use App\Models\VisitModel;
 
 class Website extends BaseController
 {
@@ -166,6 +167,43 @@ class Website extends BaseController
         }
     }
 
+    public function report($id)
+    {
+        if (!auth()->loggedIn()) {
+            return redirect()->to('/login');
+        }
+
+        $user = auth()->user();
+        $website = $this->websiteModel->where('id', $id)->where('user_id', $user->id)->first();
+
+        if (!$website) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $visitModel = new VisitModel();
+
+        $endDate   = date('Y-m-d 23:59:59');
+        $startDate = date('Y-m-d 00:00:00', strtotime('-29 days'));
+
+        $totalVisits    = $visitModel->getTotalVisits($website['id'], $startDate, $endDate);
+        $uniqueVisitors = $visitModel->getUniqueVisitors($website['id'], $startDate, $endDate);
+        $topPages       = $visitModel->getTopPages($website['id'], 10);
+        $bottomPages    = $visitModel->getBottomPages($website['id'], 10);
+        $dailyVisits    = $visitModel->getDailyVisits($website['id'], $startDate, $endDate);
+
+        return view('dashboard/websites/report', [
+            'website'        => $website,
+            'user'           => $user,
+            'totalVisits'    => $totalVisits,
+            'uniqueVisitors' => $uniqueVisitors,
+            'topPages'       => $topPages,
+            'bottomPages'    => $bottomPages,
+            'dailyVisits'    => $dailyVisits,
+            'startDate'      => $startDate,
+            'endDate'        => $endDate,
+        ]);
+    }
+
     private function generateTrackingScript($website)
     {
         $baseUrl = base_url();
@@ -174,13 +212,67 @@ class Website extends BaseController
         return <<<SCRIPT
 <script>
 (function() {
-    var visitorId = localStorage.getItem('sitecounter_visitor_id');
-    if (!visitorId) {
-        visitorId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    function getCookie(name) {
+        var cookies = document.cookie ? document.cookie.split('; ') : [];
+        for (var i = 0; i < cookies.length; i++) {
+            var parts = cookies[i].split('=');
+            var key = decodeURIComponent(parts.shift());
+            if (key === name) {
+                return decodeURIComponent(parts.join('='));
+            }
+        }
+        return null;
+    }
+
+    function setCookie(name, value, days) {
+        var maxAge = days ? days * 24 * 60 * 60 : 31536000;
+        var encoded = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+        // Try strict modern attributes first.
+        document.cookie = encoded + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+
+        if (getCookie(name) === value) {
+            return true;
+        }
+
+        // Fallback for browsers that ignore SameSite in this context.
+        document.cookie = encoded + '; path=/; max-age=' + maxAge;
+
+        if (getCookie(name) === value) {
+            return true;
+        }
+
+        // Last fallback keeps at least a session cookie.
+        document.cookie = encoded + '; path=/';
+
+        return getCookie(name) === value;
+    }
+
+    function generateUuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0;
+            var v = c === 'x' ? r : ((r & 0x3) | 0x8);
             return v.toString(16);
         });
-        localStorage.setItem('sitecounter_visitor_id', visitorId);
+    }
+
+    var cookieName = 'sitecounter_visitor_id';
+    var visitorId = getCookie(cookieName);
+
+    // Keep continuity with existing installs that used localStorage first.
+    if (!visitorId) {
+        visitorId = localStorage.getItem(cookieName);
+    }
+
+    if (!visitorId) {
+        visitorId = generateUuid();
+    }
+
+    var cookieStored = setCookie(cookieName, visitorId, 365);
+    localStorage.setItem(cookieName, visitorId);
+
+    if (!cookieStored && window.console && typeof window.console.warn === 'function') {
+        window.console.warn('SiteCounter: Could not persist visitor cookie. Using localStorage fallback only.');
     }
 
     function getPageTitle() {

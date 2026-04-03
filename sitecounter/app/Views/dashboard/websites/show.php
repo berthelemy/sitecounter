@@ -47,6 +47,7 @@
                     <h1>Website Details</h1>
                     <div>
                         <a href="/dashboard/websites/<?= $website['id'] ?>/edit" class="btn btn-warning">Edit</a>
+                        <a href="/dashboard/websites/<?= $website['id'] ?>/report" class="btn btn-info">View Report</a>
                         <a href="/dashboard/websites" class="btn btn-secondary">Back to Websites</a>
                     </div>
                 </div>

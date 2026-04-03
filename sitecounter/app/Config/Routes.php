@@ -33,6 +33,9 @@ $routes->get('/dashboard/websites/(:num)/edit', 'Website::edit/$1');
 $routes->post('/dashboard/websites/(:num)/update', 'Website::update/$1');
 $routes->post('/dashboard/websites/(:num)/delete', 'Website::delete/$1');
 
+// Report routes
+$routes->get('/dashboard/websites/(:num)/report', 'Website::report/$1');
+
 // Tracking endpoint
 $routes->post('/track', 'Track::index');
 $routes->options('/track', 'Track::options');

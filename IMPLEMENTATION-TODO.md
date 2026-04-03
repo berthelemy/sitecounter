@@ -26,27 +26,27 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: language switching changes UI
 
 ## Phase 3: Website CRUD + Tracking Script
-- [ ] Create `websites` table migration
-- [ ] Implement CRUD controller/views for websites
-- [ ] Generate tracking script per website with token
-- [ ] Add clipboard copy button to website detail
-- [ ] Manual check: website add/edit/delete works
-- [ ] Manual check: snippet copy button returns script text
+- [x] Create `websites` table migration
+- [x] Implement CRUD controller/views for websites
+- [x] Generate tracking script per website with token
+- [x] Add clipboard copy button to website detail
+- [x] Manual check: website add/edit/delete works
+- [x] Manual check: snippet copy button returns script text
 
 ## Phase 4: Tracking endpoint + Visitor ID cookie
-- [ ] Create tracking endpoint route and controller
-- [ ] Implement JS snippet to set cookie + post data
-- [ ] Add visitor ID cookie generation (UUID)
-- [ ] Ensure CORS response headers are set properly
-- [ ] Create `visits` table with needed fields
-- [ ] Manual check: request from external script stores visit
-- [ ] Manual check: same browser cookie keeps visitor ID
+- [x] Create tracking endpoint route and controller
+- [x] Implement JS snippet to set cookie + post data
+- [x] Add visitor ID cookie generation (UUID)
+- [x] Ensure CORS response headers are set properly
+- [x] Create `visits` table with needed fields
+- [x] Manual check: request from external script stores visit
+- [x] Manual check: same browser cookie keeps visitor ID
 
 ## Phase 5: Reporting Dashboard
-- [ ] Build query methods for unique visitor/day/month/year
-- [ ] Build top 10 and bottom 10 page view queries
-- [ ] Build daily page views timeline dataset
-- [ ] Build report views with Bootstrap and Chart.js
+- [x] Build query methods for unique visitor/day/month/year
+- [x] Build top 10 and bottom 10 page view queries
+- [x] Build daily page views timeline dataset
+- [x] Build report views with Bootstrap and Chart.js
 - [ ] Manual check: report stats match captured visits
 
 ## Phase 6: User Profile Management
