@@ -78,6 +78,9 @@
                             </form>
 
                             <div class="text-center mt-4">
+                                <p class="mb-1">
+                                    <a href="/login/magic-link" class="text-decoration-none">Forgot your password?</a>
+                                </p>
                                 <p class="mb-0">
                                     <a href="/" class="text-decoration-none">← Back to home</a>
                                 </p>

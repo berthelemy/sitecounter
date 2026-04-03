@@ -51,6 +51,12 @@
                             </div>
                         <?php endif; ?>
 
+                        <?php if (session()->has('password_success')): ?>
+                            <div class="alert alert-success">
+                                <?= session('password_success') ?>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (session()->has('error')): ?>
                             <div class="alert alert-danger">
                                 <?= session('error') ?>
@@ -103,6 +109,58 @@
                             <button type="submit" class="btn btn-primary">Update Profile</button>
                             <a href="/dashboard" class="btn btn-secondary">Cancel</a>
                         </form>
+
+                        <hr class="my-4">
+                        <h5>Change Password</h5>
+
+                        <?php $passwordErrors = session('password_errors') ?? []; ?>
+                        <?php if ($passwordErrors): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($passwordErrors as $e): ?>
+                                        <li><?= esc($e) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <form action="/dashboard/profile/password" method="post">
+                            <?= csrf_field() ?>
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
+                                <div class="form-text">Minimum 8 characters.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_password_confirm" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required minlength="8">
+                            </div>
+                            <button type="submit" class="btn btn-warning">Change Password</button>
+                        </form>
+
+                        <?php $supported = config('App')->supportedLocales ?? ['en']; ?>
+                        <?php if (count($supported) > 1): ?>
+                        <hr class="my-4">
+                        <h5>Language Preference</h5>
+                        <form action="/dashboard/profile/language" method="post">
+                            <?= csrf_field() ?>
+                            <div class="mb-3">
+                                <label for="language" class="form-label">Preferred Language</label>
+                                <select class="form-select" id="language" name="language">
+                                    <?php foreach ($supported as $locale): ?>
+                                        <option value="<?= esc($locale) ?>" <?= (service('request')->getLocale() === $locale) ? 'selected' : '' ?>>
+                                            <?= strtoupper(esc($locale)) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Save Language</button>
+                        </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

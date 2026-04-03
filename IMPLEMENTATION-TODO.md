@@ -50,10 +50,10 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: report stats match captured visits
 
 ## Phase 6: User Profile Management
-- [ ] Add password change functionality to profile page
-- [ ] Add password reset request from login screen
-- [ ] Add language preference setting to profile
-- [ ] Update profile form with new fields
+- [x] Add password change functionality to profile page
+- [x] Add password reset request from login screen
+- [x] Add language preference setting to profile
+- [x] Update profile form with new fields
 - [ ] Manual check: password change works
 - [ ] Manual check: password reset email sent
 - [ ] Manual check: language preference saved

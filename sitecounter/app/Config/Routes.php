@@ -23,6 +23,8 @@ $routes->post('/install/run', 'Install::run');
 $routes->get('/dashboard', 'Dashboard::index');
 $routes->get('/dashboard/profile', 'Dashboard::profile');
 $routes->post('/dashboard/profile', 'Dashboard::updateProfile');
+$routes->post('/dashboard/profile/password', 'Dashboard::changePassword');
+$routes->post('/dashboard/profile/language', 'Dashboard::updateLanguage');
 
 // Website routes
 $routes->get('/dashboard/websites', 'Website::index');

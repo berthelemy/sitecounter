@@ -53,3 +53,17 @@ Events::on('pre_system', static function (): void {
         }
     }
 });
+
+// Apply saved locale preference from cookie on every web request.
+Events::on('pre_controller', static function (): void {
+    if (is_cli()) {
+        return;
+    }
+    $locale = service('request')->getCookie('sitecounter_locale');
+    if ($locale) {
+        $supported = config('App')->supportedLocales ?? ['en'];
+        if (in_array($locale, $supported, true)) {
+            service('request')->setLocale($locale);
+        }
+    }
+});
