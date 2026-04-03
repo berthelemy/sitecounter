@@ -10,19 +10,43 @@ class Track extends BaseController
     public function index()
     {
         // Only accept POST requests
-        if ($this->request->getMethod() !== 'post') {
-            return $this->response->setStatusCode(405)->setBody('Method not allowed');
+        if (! $this->request->is('post')) {
+            return $this->response
+                ->setStatusCode(405)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Method not allowed',
+                ])
+                ->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         }
 
         // Get JSON data from request
         $json = $this->request->getJSON();
         if (!$json) {
-            return $this->response->setStatusCode(400)->setBody('Invalid JSON');
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid JSON',
+                ])
+                ->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         }
 
         // Validate required fields
         if (!isset($json->token) || !isset($json->visitor_id) || !isset($json->url)) {
-            return $this->response->setStatusCode(400)->setBody('Missing required fields');
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Missing required fields',
+                ])
+                ->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         }
 
         // Find website by token
@@ -30,7 +54,15 @@ class Track extends BaseController
         $website = $websiteModel->where('token', $json->token)->first();
 
         if (!$website) {
-            return $this->response->setStatusCode(404)->setBody('Website not found');
+            return $this->response
+                ->setStatusCode(404)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Website not found',
+                ])
+                ->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         }
 
         // Create visit record
@@ -48,7 +80,23 @@ class Track extends BaseController
         ];
 
         try {
-            $visitModel->insert($visitData);
+            $inserted = $visitModel->insert($visitData);
+
+            if ($inserted === false) {
+                $errors = $visitModel->errors();
+                log_message('error', 'Failed to save visit (validation): ' . json_encode($errors));
+
+                return $this->response
+                    ->setStatusCode(422)
+                    ->setJSON([
+                        'status' => 'error',
+                        'message' => 'Validation failed',
+                        'errors' => $errors,
+                    ])
+                    ->setHeader('Access-Control-Allow-Origin', '*')
+                    ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                    ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
+            }
 
             // Return success with CORS headers
             return $this->response
@@ -60,7 +108,15 @@ class Track extends BaseController
 
         } catch (\Exception $e) {
             log_message('error', 'Failed to save visit: ' . $e->getMessage());
-            return $this->response->setStatusCode(500)->setBody('Internal server error');
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Internal server error',
+                ])
+                ->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+                ->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         }
     }
 

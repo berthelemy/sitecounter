@@ -183,21 +183,50 @@ class Website extends BaseController
         localStorage.setItem('sitecounter_visitor_id', visitorId);
     }
 
-    var data = {
-        token: '{$token}',
-        visitor_id: visitorId,
-        url: window.location.href,
-        title: document.title,
-        referrer: document.referrer,
-        user_agent: navigator.userAgent,
-        screen_resolution: screen.width + 'x' + screen.height,
-        timestamp: new Date().toISOString()
-    };
+    function getPageTitle() {
+        var title = '';
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '{$baseUrl}track', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(data));
+        if (typeof document.title === 'string') {
+            title = document.title.trim();
+        }
+
+        if (!title) {
+            var titleEl = document.querySelector('title');
+            if (titleEl && typeof titleEl.textContent === 'string') {
+                title = titleEl.textContent.trim();
+            }
+        }
+
+        if (!title) {
+            title = window.location.pathname;
+        }
+
+        return title;
+    }
+
+    function sendVisit() {
+        var data = {
+            token: '{$token}',
+            visitor_id: visitorId,
+            url: window.location.href,
+            title: getPageTitle(),
+            referrer: document.referrer,
+            user_agent: navigator.userAgent,
+            screen_resolution: screen.width + 'x' + screen.height,
+            timestamp: new Date().toISOString()
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{$baseUrl}track', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', sendVisit, { once: true });
+    } else {
+        sendVisit();
+    }
 })();
 </script>
 SCRIPT;

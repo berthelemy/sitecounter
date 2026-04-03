@@ -37,4 +37,4 @@ This is a web application for tracking website usage, built with CodeIgniter 4 a
 
 ## Prompts
 
-- Explain what you are doing and why
+- Explain what you are doing and why before writing code
