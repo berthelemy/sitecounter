@@ -187,6 +187,7 @@ class Website extends BaseController
         token: '{$token}',
         visitor_id: visitorId,
         url: window.location.href,
+        title: document.title,
         referrer: document.referrer,
         user_agent: navigator.userAgent,
         screen_resolution: screen.width + 'x' + screen.height,
