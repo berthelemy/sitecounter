@@ -54,9 +54,9 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Add password reset request from login screen
 - [x] Add language preference setting to profile
 - [x] Update profile form with new fields
-- [ ] Manual check: password change works
-- [ ] Manual check: password reset email sent
-- [ ] Manual check: language preference saved
+- [x] Manual check: password change works
+- [x] Manual check: password reset email sent
+- [x] Manual check: language preference saved
 
 ## Phase 7: Database Configuration Options
 - [ ] Add database type selection to installer

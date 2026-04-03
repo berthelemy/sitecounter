@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= esc(service('request')->getLocale()) ?>">
 <head>
     <meta charset="UTF-8">
     <title>SiteCounter Installation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
@@ -24,6 +25,7 @@
 
                         <button id="install-btn" class="btn btn-primary btn-lg w-100" onclick="runInstall()">
                             <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            <i class="bi bi-download me-1"></i>
                             Install SiteCounter
                         </button>
                     </div>

@@ -11,7 +11,7 @@ if (!function_exists('lang_switcher')) {
 
         $html = '<div class="dropdown">';
         $html .= '<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">';
-        $html .= '<i class="fas fa-globe"></i> ' . strtoupper($currentLang);
+        $html .= '<i class="bi bi-globe2"></i> ' . strtoupper($currentLang);
         $html .= '</button>';
         $html .= '<ul class="dropdown-menu">';
 

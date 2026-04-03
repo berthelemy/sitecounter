@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= esc(service('request')->getLocale()) ?>">
 <head>
     <meta charset="UTF-8">
     <title><?= lang('SiteCounter.report.title_prefix') ?>: <?= esc($website['name']) ?> - <?= lang('SiteCounter.app.name') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -16,13 +17,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><?= lang('SiteCounter.nav.dashboard') ?></a>
+                        <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2 me-1"></i><?= lang('SiteCounter.nav.dashboard') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard/websites"><?= lang('SiteCounter.nav.websites') ?></a>
+                        <a class="nav-link active" href="/dashboard/websites"><i class="bi bi-globe me-1"></i><?= lang('SiteCounter.nav.websites') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard/profile"><?= lang('SiteCounter.nav.profile') ?></a>
+                        <a class="nav-link" href="/dashboard/profile"><i class="bi bi-person-circle me-1"></i><?= lang('SiteCounter.nav.profile') ?></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -30,7 +31,7 @@
                         <span class="navbar-text me-3"><?= esc(lang('SiteCounter.app.welcome_user', [$user->username])) ?></span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout"><?= lang('SiteCounter.nav.logout') ?></a>
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right me-1"></i><?= lang('SiteCounter.nav.logout') ?></a>
                     </li>
                 </ul>
             </div>
@@ -51,7 +52,7 @@
                     &mdash; <?= lang('SiteCounter.report.last_30_days') ?> (<?= esc(date('d M', strtotime($startDate))) ?> &ndash; <?= esc(date('d M Y', strtotime($endDate))) ?>)
                 </small>
             </div>
-            <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-secondary"><?= lang('SiteCounter.report.back_to_website') ?></a>
+            <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i><?= lang('SiteCounter.report.back_to_website') ?></a>
         </div>
 
         <!-- Summary cards -->

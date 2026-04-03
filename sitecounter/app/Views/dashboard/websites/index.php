@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= esc(service('request')->getLocale()) ?>">
 <head>
     <meta charset="UTF-8">
     <title><?= lang('SiteCounter.websites.title') ?> - <?= lang('SiteCounter.app.name') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -16,13 +17,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><?= lang('SiteCounter.nav.dashboard') ?></a>
+                        <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2 me-1"></i><?= lang('SiteCounter.nav.dashboard') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard/websites"><?= lang('SiteCounter.nav.websites') ?></a>
+                        <a class="nav-link active" href="/dashboard/websites"><i class="bi bi-globe me-1"></i><?= lang('SiteCounter.nav.websites') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard/profile"><?= lang('SiteCounter.nav.profile') ?></a>
+                        <a class="nav-link" href="/dashboard/profile"><i class="bi bi-person-circle me-1"></i><?= lang('SiteCounter.nav.profile') ?></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -30,7 +31,7 @@
                         <span class="navbar-text me-3"><?= esc(lang('SiteCounter.app.welcome_user', [$user->username])) ?></span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout"><?= lang('SiteCounter.nav.logout') ?></a>
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right me-1"></i><?= lang('SiteCounter.nav.logout') ?></a>
                     </li>
                 </ul>
             </div>
@@ -46,7 +47,7 @@
             <div class="col-md-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1><?= lang('SiteCounter.websites.title') ?></h1>
-                    <a href="/dashboard/websites/create" class="btn btn-primary"><?= lang('SiteCounter.websites.add_website') ?></a>
+                    <a href="/dashboard/websites/create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i><?= lang('SiteCounter.websites.add_website') ?></a>
                 </div>
 
                 <?php if (session()->has('success')): ?>
@@ -87,11 +88,11 @@
                                                 <td><a href="<?= esc($website['url']) ?>" target="_blank"><?= esc($website['url']) ?></a></td>
                                                 <td><?= date('M j, Y', strtotime($website['created_at'])) ?></td>
                                                 <td>
-                                                    <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-sm btn-info"><?= lang('SiteCounter.websites.view') ?></a>
-                                                    <a href="/dashboard/websites/<?= $website['id'] ?>/edit" class="btn btn-sm btn-warning"><?= lang('SiteCounter.websites.edit') ?></a>
+                                                    <a href="/dashboard/websites/<?= $website['id'] ?>" class="btn btn-sm btn-info"><i class="bi bi-eye me-1"></i><?= lang('SiteCounter.websites.view') ?></a>
+                                                    <a href="/dashboard/websites/<?= $website['id'] ?>/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil me-1"></i><?= lang('SiteCounter.websites.edit') ?></a>
                                                     <form method="post" action="/dashboard/websites/<?= $website['id'] ?>/delete" style="display: inline;">
                                                         <?= csrf_field() ?>
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('<?= esc(lang('SiteCounter.websites.delete_confirm')) ?>')"><?= lang('SiteCounter.websites.delete') ?></button>
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('<?= esc(lang('SiteCounter.websites.delete_confirm')) ?>')"><i class="bi bi-trash me-1"></i><?= lang('SiteCounter.websites.delete') ?></button>
                                                     </form>
                                                 </td>
                                             </tr>
