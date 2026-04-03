@@ -28,6 +28,8 @@ To create an easy to install web application that allows an administrator to tra
 
 - The application will initially have one user, the administrator
 - The user will be represented by a firstname and lastname and an email address
+- The user should be able to change their password securely from within their profile
+- The user should be able to request a new password from the login screen
 - The user should be able to change the following settings:
     - Preferred language
 

@@ -34,3 +34,7 @@ This is a web application for tracking website usage, built with CodeIgniter 4 a
 - Passwords minimum 8 characters
 - No command-line installation after setup
 - Remove sensitive data before open sourcing
+
+## Prompts
+
+- Explain what you are doing and why

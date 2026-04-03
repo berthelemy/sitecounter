@@ -14,16 +14,16 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: Bootstrap styling applies for buttons
 
 ## Phase 2: Auth + User + Language
-- [ ] Add authentication logic (Shield or custom)
-- [ ] Create `UserModel` with firstname, lastname, email, password
-- [ ] Seed admin user via migration
-- [ ] Implement login/logout and profile routes / views
-- [ ] Validate password minimum 8 chars
-- [ ] Add multi-language files in `app/Languages/`
-- [ ] Add language switch UI and persistence
-- [ ] Manual check: admin can login and logout
-- [ ] Manual check: weak password is rejected
-- [ ] Manual check: language switching changes UI
+- [x] Add authentication logic (Shield or custom)
+- [x] Create `UserModel` with firstname, lastname, email, password
+- [x] Seed admin user via migration
+- [x] Implement login/logout and profile routes / views
+- [x] Validate password minimum 8 chars
+- [x] Add multi-language files in `app/Languages/`
+- [x] Add language switch UI and persistence
+- [x] Manual check: admin can login and logout
+- [x] Manual check: weak password is rejected
+- [x] Manual check: language switching changes UI
 
 ## Phase 3: Website CRUD + Tracking Script
 - [ ] Create `websites` table migration
@@ -48,6 +48,30 @@ This file tracks progress for all implementation phases with manual verification
 - [ ] Build daily page views timeline dataset
 - [ ] Build report views with Bootstrap and Chart.js
 - [ ] Manual check: report stats match captured visits
+
+## Phase 6: User Profile Management
+- [ ] Add password change functionality to profile page
+- [ ] Add password reset request from login screen
+- [ ] Add language preference setting to profile
+- [ ] Update profile form with new fields
+- [ ] Manual check: password change works
+- [ ] Manual check: password reset email sent
+- [ ] Manual check: language preference saved
+
+## Phase 7: Database Configuration Options
+- [ ] Add database type selection to installer
+- [ ] Add MySQL/MariaDB configuration fields to installer
+- [ ] Update database config based on installer choices
+- [ ] Test MySQL/MariaDB connection during install
+- [ ] Manual check: MySQL installation works
+- [ ] Manual check: MariaDB installation works
+
+## Phase 8: UI Enhancements
+- [ ] Add Bootstrap Icons library
+- [ ] Update UI to use proper icons throughout
+- [ ] Improve visual design and user experience
+- [ ] Manual check: icons display correctly
+- [ ] Manual check: UI is polished and professional
 - [ ] Manual check: chart displays correct daily values
 
 ## Phase 6: Testing + Version + Open Source
