@@ -75,7 +75,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form action="/dashboard/profile" method="post">
+                        <form action="/dashboard/profile" method="post" novalidate>
                             <?= csrf_field() ?>
 
                             <div class="row">
@@ -125,7 +125,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form action="/dashboard/profile/password" method="post">
+                        <form action="/dashboard/profile/password" method="post" novalidate>
                             <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label for="current_password" class="form-label"><?= lang('SiteCounter.profile.current_password') ?></label>

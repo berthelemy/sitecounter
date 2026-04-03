@@ -53,7 +53,20 @@ class Website extends BaseController
             'url' => 'required|valid_url|max_length[255]',
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'name' => [
+                'required'    => lang('SiteCounter.messages.website_name_required'),
+                'min_length'  => lang('SiteCounter.messages.website_name_required'),
+                'max_length'  => lang('SiteCounter.messages.website_name_max_length'),
+            ],
+            'url' => [
+                'required'    => lang('SiteCounter.messages.website_url_required'),
+                'valid_url'   => lang('SiteCounter.messages.website_url_valid'),
+                'max_length'  => lang('SiteCounter.messages.website_url_max_length'),
+            ],
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -65,7 +78,7 @@ class Website extends BaseController
         ];
 
         if ($this->websiteModel->insert($data)) {
-            return redirect()->to('/dashboard/websites')->with('success', 'Website created successfully.');
+            return redirect()->to('/dashboard/websites')->with('success', lang('SiteCounter.messages.website_created'));
         } else {
             return redirect()->back()->withInput()->with('errors', $this->websiteModel->errors());
         }
@@ -131,7 +144,20 @@ class Website extends BaseController
             'url' => 'required|valid_url|max_length[255]',
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'name' => [
+                'required'    => lang('SiteCounter.messages.website_name_required'),
+                'min_length'  => lang('SiteCounter.messages.website_name_required'),
+                'max_length'  => lang('SiteCounter.messages.website_name_max_length'),
+            ],
+            'url' => [
+                'required'    => lang('SiteCounter.messages.website_url_required'),
+                'valid_url'   => lang('SiteCounter.messages.website_url_valid'),
+                'max_length'  => lang('SiteCounter.messages.website_url_max_length'),
+            ],
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -141,7 +167,7 @@ class Website extends BaseController
         ];
 
         if ($this->websiteModel->update($website['id'], $data)) {
-            return redirect()->to('/dashboard/websites')->with('success', 'Website updated successfully.');
+            return redirect()->to('/dashboard/websites')->with('success', lang('SiteCounter.messages.website_updated'));
         } else {
             return redirect()->back()->withInput()->with('errors', $this->websiteModel->errors());
         }
@@ -161,7 +187,7 @@ class Website extends BaseController
         }
 
         if ($this->websiteModel->delete($website['id'])) {
-            return redirect()->to('/dashboard/websites')->with('success', 'Website deleted successfully.');
+            return redirect()->to('/dashboard/websites')->with('success', lang('SiteCounter.messages.website_deleted'));
         } else {
             return redirect()->back()->withInput()->with('errors', $this->websiteModel->errors());
         }

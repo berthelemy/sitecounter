@@ -12,7 +12,7 @@ class Install extends BaseController
 
         // Check if already installed
         if ($installModel->isInstalled()) {
-            return redirect()->to('/')->with('error', 'SiteCounter is already installed.');
+            return redirect()->to('/')->with('error', lang('SiteCounter.messages.already_installed'));
         }
 
         return view('install');
@@ -26,7 +26,7 @@ class Install extends BaseController
         if ($installModel->isInstalled()) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'SiteCounter is already installed.'
+                'message' => lang('SiteCounter.messages.already_installed')
             ]);
         }
 
@@ -35,12 +35,12 @@ class Install extends BaseController
             $result = $installModel->install();
             return $this->response->setJSON([
                 'success' => $result,
-                'message' => $result ? 'Installation completed successfully!' : 'Installation failed.'
+                'message' => $result ? lang('SiteCounter.messages.install_completed') : lang('SiteCounter.messages.install_failed')
             ]);
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Installation error: ' . $e->getMessage()
+                'message' => lang('SiteCounter.messages.install_error', [$e->getMessage()])
             ]);
         }
     }

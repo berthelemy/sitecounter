@@ -59,7 +59,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form method="post" action="/dashboard/websites/store">
+                        <form method="post" action="/dashboard/websites/store" novalidate>
                             <?= csrf_field() ?>
 
                             <div class="mb-3">

@@ -8,16 +8,12 @@ class UserModel extends ShieldUserModel
 {
     protected $allowedFields = [
         'username',
-        'email',
-        'password',
         'firstname',
         'lastname',
     ];
 
     protected $validationRules = [
         'username' => 'required|alpha_numeric_space|min_length[3]|max_length[30]|is_unique[users.username,id,{id}]',
-        'email'    => 'required|valid_email|is_unique[users.email,id,{id}]',
-        'password' => 'required|min_length[8]',
         'firstname' => 'permit_empty|alpha_space|min_length[2]|max_length[50]',
         'lastname' => 'permit_empty|alpha_space|min_length[2]|max_length[50]',
     ];
@@ -25,12 +21,6 @@ class UserModel extends ShieldUserModel
     protected $validationMessages = [
         'username' => [
             'is_unique' => 'This username is already taken.',
-        ],
-        'email' => [
-            'is_unique' => 'This email address is already registered.',
-        ],
-        'password' => [
-            'min_length' => 'Password must be at least 8 characters long.',
         ],
         'firstname' => [
             'required' => 'First name is required.',
@@ -43,11 +33,15 @@ class UserModel extends ShieldUserModel
     ];
 
     /**
-     * Get user by email
+     * Get user by email identity.
      */
     public function findByEmail(string $email): ?object
     {
-        return $this->where('email', $email)->first();
+        return $this->select('users.*')
+            ->join('auth_identities', 'auth_identities.user_id = users.id', 'inner')
+            ->where('auth_identities.type', 'email_password')
+            ->where('auth_identities.secret', $email)
+            ->first();
     }
 
     /**
