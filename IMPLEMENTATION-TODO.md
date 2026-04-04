@@ -52,11 +52,13 @@ This file tracks progress for all implementation phases with manual verification
 ## Phase 6: User Profile Management
 - [x] Add password change functionality to profile page
 - [x] Add password reset request from login screen
-- [x] Add language preference setting to profile
+- [x] Add language preference switching and persistence
 - [x] Update profile form with new fields
+- [x] Allow magic-link (forgot password) users to set a new password without current password (one-time reset mode)
+- [x] Harden profile update normalization (trim/lowercase email and case-insensitive uniqueness checks)
 - [x] Manual check: password change works
 - [x] Manual check: password reset email sent
-- [x] Manual check: language preference saved
+- [x] Manual check: language switch persists across pages
 
 ## Phase 7: Database Configuration Options
 - [ ] Add database type selection to installer
@@ -67,24 +69,59 @@ This file tracks progress for all implementation phases with manual verification
 - [ ] Manual check: MariaDB installation works
 
 ## Phase 8: UI Enhancements
-- [ ] Add Bootstrap Icons library
-- [ ] Update UI to use proper icons throughout
-- [ ] Improve visual design and user experience
-- [ ] Manual check: icons display correctly
-- [ ] Manual check: UI is polished and professional
-- [ ] Manual check: chart displays correct daily values
+- [x] Add Bootstrap Icons library
+- [x] Update UI to use proper icons throughout
+- [x] Improve visual design and user experience
+- [x] Manual check: icons display correctly
+- [x] Manual check: UI is polished and professional
+- [x] Manual check: chart displays correct daily values
 
-## Phase 6: Testing + Version + Open Source
+## Phase 9: Testing + Version + Open Source
 - [ ] Write PHPUnit unit tests for models and validation
-- [ ] Write integration tests for controller routes
+- [x] Write integration tests for password reset controller flow (magic-link reset mode + normal password change requirement)
 - [ ] Document manual acceptance testing cases
 - [ ] Implement Git workflow and branch strategy
 - [ ] Add README, LICENSE, CONTRIBUTING
 - [ ] Add .gitignore for PHP/CI and secrets
-- [ ] Run all tests: `vendor/bin/phpunit`
+- [ ] Run all tests: `vendor/bin/phpunit` (new password reset tests pass in isolation)
 - [ ] Tag release using Git and push tags
 - [ ] Manual check: all tests pass
 - [ ] Manual check: release tag exists in remote
+
+## Phase 10: Tidy up
+- [ ] Improve the vertical alignment of the navbar text "Welcome" so it aligns with everything else in the navbar
+- [ ] Ensure that the main menu remains the same for all pages.
+- [ ] On the login page, ensure that the language selector has sufficient contrast with the background
+
+## Phase 11: Dashboard improvements
+- [ ] On the dashboard, add a card for each tracked website showing the total number of unique visitors, the average number of unique visitors per month, and the number of unique visitors last month
+
+## Session Handoff (2026-04-04)
+
+Completed in this session:
+- Added French override for Shield Auth message `invalidEmail` so "Unable to verify the email address" is translated.
+- Implemented profile update hardening in `Dashboard::updateProfile`:
+	- trims profile inputs
+	- lowercases email before storage
+	- checks email uniqueness case-insensitively
+	- normalizes repeated spaces in firstname/lastname
+- Implemented forgot-password UX behavior in `Dashboard` + profile view:
+	- detects magic-link login tempdata
+	- enables one-time `password_reset_mode`
+	- allows password change without current password while in reset mode
+	- clears reset mode after successful password change
+- Added automated integration tests in `tests/session/PasswordResetFlowTest.php` covering:
+	- magic-link login enables reset mode
+	- reset mode allows new password without current password
+	- normal flow still requires current password
+
+Next recommended work:
+- Phase 7 (pending): add MySQL/MariaDB installer options.
+- Phase 9 (pending):
+	- add integration tests for profile email normalization and uniqueness edge cases
+	- run full test suite and resolve any failures
+	- document manual acceptance checks for auth/profile/report flows
+
 
 ---
 

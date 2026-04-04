@@ -65,6 +65,12 @@
                             </div>
                         <?php endif; ?>
 
+                        <?php if (session()->has('info')): ?>
+                            <div class="alert alert-info">
+                                <?= session('info') ?>
+                            </div>
+                        <?php endif; ?>
+
                         <?php $errors = session('errors') ?? []; ?>
                         <?php if ($errors): ?>
                             <div class="alert alert-danger">
@@ -128,10 +134,16 @@
 
                         <form action="/dashboard/profile/password" method="post" novalidate>
                             <?= csrf_field() ?>
-                            <div class="mb-3">
-                                <label for="current_password" class="form-label"><?= lang('SiteCounter.profile.current_password') ?></label>
-                                <input type="password" class="form-control" id="current_password" name="current_password" required>
-                            </div>
+                            <?php if (! $passwordResetMode): ?>
+                                <div class="mb-3">
+                                    <label for="current_password" class="form-label"><?= lang('SiteCounter.profile.current_password') ?></label>
+                                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                </div>
+                            <?php else: ?>
+                                <div class="alert alert-info py-2">
+                                    <?= lang('SiteCounter.profile.magic_link_reset_hint') ?>
+                                </div>
+                            <?php endif; ?>
                             <div class="mb-3">
                                 <label for="new_password" class="form-label"><?= lang('SiteCounter.profile.new_password') ?></label>
                                 <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">

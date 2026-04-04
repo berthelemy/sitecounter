@@ -6,12 +6,29 @@ use CodeIgniter\Shield\Entities\User;
 
 class Dashboard extends BaseController
 {
+    /**
+     * Promote Shield's magic-link tempdata to a session flag
+     * so the user can reset password once without current password.
+     */
+    private function activatePasswordResetModeFromMagicLink(): void
+    {
+        if (! session()->getTempdata('magicLogin')) {
+            return;
+        }
+
+        session()->set('password_reset_mode', true);
+        session()->removeTempdata('magicLogin');
+        session()->setFlashdata('info', lang('SiteCounter.messages.magic_link_password_reset_ready'));
+    }
+
     public function index()
     {
         // Check if user is logged in
         if (!auth()->loggedIn()) {
             return redirect()->to('/login');
         }
+
+        $this->activatePasswordResetModeFromMagicLink();
 
         $user = auth()->user();
         $userModel = new \App\Models\UserModel();
@@ -29,12 +46,15 @@ class Dashboard extends BaseController
             return redirect()->to('/login');
         }
 
+        $this->activatePasswordResetModeFromMagicLink();
+
         $user = auth()->user();
         $userModel = new \App\Models\UserModel();
 
         return view('dashboard/profile', [
             'user' => $user,
             'fullName' => $userModel->getFullName($user),
+            'passwordResetMode' => (bool) session('password_reset_mode'),
         ]);
     }
 
@@ -74,14 +94,20 @@ class Dashboard extends BaseController
             ],
         ];
 
-        if (! $this->validate($rules, $messages)) {
+        $inputData = [
+            'firstname' => trim((string) $this->request->getPost('firstname')),
+            'lastname'  => trim((string) $this->request->getPost('lastname')),
+            'email'     => trim((string) $this->request->getPost('email')),
+        ];
+
+        if (! $this->validateData($inputData, $rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $email = (string) $this->request->getPost('email');
+        $email = strtolower($inputData['email']);
         $emailInUse = $db->table('auth_identities')
             ->where('type', 'email_password')
-            ->where('secret', $email)
+            ->where('LOWER(secret)', $email, false)
             ->where('user_id !=', $user->id)
             ->countAllResults() > 0;
 
@@ -92,8 +118,8 @@ class Dashboard extends BaseController
         }
 
         $userData = [
-            'firstname' => $this->request->getPost('firstname'),
-            'lastname' => $this->request->getPost('lastname'),
+            'firstname' => preg_replace('/\s+/', ' ', $inputData['firstname']) ?? $inputData['firstname'],
+            'lastname' => preg_replace('/\s+/', ' ', $inputData['lastname']) ?? $inputData['lastname'],
         ];
 
         $db->transStart();
@@ -120,11 +146,18 @@ class Dashboard extends BaseController
             return redirect()->to('/login');
         }
 
-        $rules = [
-            'current_password'      => 'required',
-            'new_password'          => 'required|min_length[8]',
-            'new_password_confirm'  => 'required|matches[new_password]',
-        ];
+        $passwordResetMode = (bool) session('password_reset_mode');
+
+        $rules = $passwordResetMode
+            ? [
+                'new_password'         => 'required|min_length[8]',
+                'new_password_confirm' => 'required|matches[new_password]',
+            ]
+            : [
+                'current_password'     => 'required',
+                'new_password'         => 'required|min_length[8]',
+                'new_password_confirm' => 'required|matches[new_password]',
+            ];
 
         $messages = [
             'current_password' => [
@@ -146,20 +179,26 @@ class Dashboard extends BaseController
                 ->with('password_errors', $this->validator->getErrors());
         }
 
-        $currentPassword = $this->request->getPost('current_password');
         $newPassword     = $this->request->getPost('new_password');
 
         $user = auth()->user();
-        $validPassword = service('passwords')->verify($currentPassword, $user->password_hash);
+        if (! $passwordResetMode) {
+            $currentPassword = $this->request->getPost('current_password');
+            $validPassword = service('passwords')->verify($currentPassword, $user->password_hash);
 
-        if (!$validPassword) {
-            return redirect()->to('/dashboard/profile')
-                ->with('password_errors', ['current_password' => lang('SiteCounter.messages.current_password_incorrect')]);
+            if (!$validPassword) {
+                return redirect()->to('/dashboard/profile')
+                    ->with('password_errors', ['current_password' => lang('SiteCounter.messages.current_password_incorrect')]);
+            }
         }
 
         $users = auth()->getProvider();
         $user->fill(['password' => $newPassword]);
         $users->save($user);
+
+        if ($passwordResetMode) {
+            session()->remove('password_reset_mode');
+        }
 
         return redirect()->to('/dashboard/profile')->with('password_success', lang('SiteCounter.messages.password_changed'));
     }
