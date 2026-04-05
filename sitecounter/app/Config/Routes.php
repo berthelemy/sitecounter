@@ -42,4 +42,10 @@ $routes->get('/dashboard/websites/(:num)/report', 'Website::report/$1');
 $routes->post('/track', 'Track::index');
 $routes->options('/track', 'Track::options');
 
-service('auth')->routes($routes);
+// On a fresh install, Shield settings tables may not exist yet.
+// Skip registering auth routes until the database is ready.
+try {
+	service('auth')->routes($routes);
+} catch (\Throwable $e) {
+	log_message('debug', 'Skipping auth routes before installation: {message}', ['message' => $e->getMessage()]);
+}
