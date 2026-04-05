@@ -105,11 +105,21 @@ class Dashboard extends BaseController
         }
 
         $email = strtolower($inputData['email']);
-        $emailInUse = $db->table('auth_identities')
+        $otherEmailIdentities = $db->table('auth_identities')
+            ->select('secret')
             ->where('type', 'email_password')
-            ->where('LOWER(secret)', $email, false)
             ->where('user_id !=', $user->id)
-            ->countAllResults() > 0;
+            ->get()
+            ->getResultArray();
+
+        $emailInUse = false;
+        foreach ($otherEmailIdentities as $identityRow) {
+            $existingEmail = strtolower(trim((string) ($identityRow['secret'] ?? '')));
+            if ($existingEmail === $email) {
+                $emailInUse = true;
+                break;
+            }
+        }
 
         if ($emailInUse) {
             return redirect()->back()->withInput()->with('errors', [

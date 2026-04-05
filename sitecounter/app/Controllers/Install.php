@@ -6,6 +6,9 @@ use App\Models\InstallModel;
 
 class Install extends BaseController
 {
+    /**
+     * Show installer page when application is not yet installed.
+     */
     public function index()
     {
         $installModel = new InstallModel();
@@ -18,6 +21,9 @@ class Install extends BaseController
         return view('install');
     }
 
+    /**
+     * Execute installation and return JSON response.
+     */
     public function run()
     {
         $installModel = new InstallModel();
@@ -30,9 +36,14 @@ class Install extends BaseController
             ]);
         }
 
+        $payload = $this->request->getJSON(true);
+        if (! is_array($payload)) {
+            $payload = $this->request->getPost();
+        }
+
         // Run installation
         try {
-            $result = $installModel->install();
+            $result = $installModel->install($payload);
             return $this->response->setJSON([
                 'success' => $result,
                 'message' => $result ? lang('SiteCounter.messages.install_completed') : lang('SiteCounter.messages.install_failed')

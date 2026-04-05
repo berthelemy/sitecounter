@@ -61,10 +61,10 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: language switch persists across pages
 
 ## Phase 7: Database Configuration Options
-- [ ] Add database type selection to installer
-- [ ] Add MySQL/MariaDB configuration fields to installer
-- [ ] Update database config based on installer choices
-- [ ] Test MySQL/MariaDB connection during install
+- [x] Add database type selection to installer
+- [x] Add MySQL/MariaDB configuration fields to installer
+- [x] Update database config based on installer choices
+- [x] Test MySQL/MariaDB connection during install
 - [ ] Manual check: MySQL installation works
 - [ ] Manual check: MariaDB installation works
 
@@ -79,13 +79,13 @@ This file tracks progress for all implementation phases with manual verification
 ## Phase 9: Testing + Version + Open Source
 - [ ] Write PHPUnit unit tests for models and validation
 - [x] Write integration tests for password reset controller flow (magic-link reset mode + normal password change requirement)
-- [ ] Document manual acceptance testing cases
+- [x] Document manual acceptance testing cases
 - [ ] Implement Git workflow and branch strategy
 - [ ] Add README, LICENSE, CONTRIBUTING
 - [ ] Add .gitignore for PHP/CI and secrets
-- [ ] Run all tests: `vendor/bin/phpunit` (new password reset tests pass in isolation)
+- [x] Run all tests: `vendor/bin/phpunit` (tests pass; coverage-mode warning remains)
 - [ ] Tag release using Git and push tags
-- [ ] Manual check: all tests pass
+- [x] Manual check: all tests pass
 - [ ] Manual check: release tag exists in remote
 
 ## Phase 10: Tidy up
@@ -94,7 +94,18 @@ This file tracks progress for all implementation phases with manual verification
 - [ ] On the login page, ensure that the language selector has sufficient contrast with the background
 
 ## Phase 11: Dashboard improvements
-- [ ] On the dashboard, add a card for each tracked website showing the total number of unique visitors, the average number of unique visitors per month, and the number of unique visitors last month
+- [ ] On the dashboard, add a card for each tracked website showing the total number of unique visitors
+- [ ] On the dashboard, within the card for each tracked website show the average number of unique visitors per month
+- [ ] On the dashboard, within the card for each tracked website show the number of unique visitors last month
+- [ ] On the dashboard, within the card for each tracked website show the total number of visits
+- [ ] On the dashboard, within the card for each tracked website show the average number of visits per month
+- [ ] On the dashboard, within the card for each tracked website show the number of visits last month
+- [ ] On the reports page for each website show the total number of unique visitors
+- [ ] On the reports page for each website show the average number of unique visitors per month
+- [ ] On the reports page for each website show the number of unique visitors last month
+- [ ] On the reports page for each website show the total number of visits
+- [ ] On the reports page for each website show the average number of visits per month
+- [ ] On the reports page for each website show the number of visits last month
 
 ## Session Handoff (2026-04-04)
 
@@ -121,6 +132,30 @@ Next recommended work:
 	- add integration tests for profile email normalization and uniqueness edge cases
 	- run full test suite and resolve any failures
 	- document manual acceptance checks for auth/profile/report flows
+
+## Session Continuation (2026-04-05)
+
+Completed in this session:
+- Implemented Phase 7 installer database options:
+	- installer now supports SQLite / MySQL / MariaDB selection
+	- installer captures DB credentials for MySQL/MariaDB
+	- installer validates required DB fields and tests DB connectivity before migration
+	- installer persists selected DB config into `.env` and applies runtime settings before migrations
+- Added localized installer copy for English and French (`install` language keys + install validation messages).
+- Added integration tests for profile update edge cases in `tests/session/ProfileUpdateFlowTest.php`:
+	- profile name/email normalization on update
+	- case-insensitive duplicate email rejection behavior
+- Fixed profile email uniqueness logic for cross-driver compatibility in `Dashboard::updateProfile`.
+- Added manual acceptance checklist in `tests/MANUAL-ACCEPTANCE.md`.
+- Ran full test suite (`vendor/bin/phpunit`): tests pass; PHPUnit exits with warning due to missing coverage mode.
+
+Next recommended work:
+- Phase 7 manual checks:
+	- verify end-to-end installer success against real MySQL
+	- verify end-to-end installer success against real MariaDB
+- Phase 9 pending:
+	- add model/validation unit tests
+	- complete release process tasks (branch strategy, release tagging)
 
 
 ---
