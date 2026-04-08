@@ -59,6 +59,57 @@ Use the standard secure layout:
 
   CI_ENVIRONMENT = production
 
+## Shared Hosting Troubleshooting Checklist
+
+Use this checklist if you are redirected to localhost or see:
+
+- Installation failed: Unexpected token '<', "<!DOCTYPE ..." is not valid JSON
+
+1. Confirm .env location
+
+- File must be at sitecounter/.env (project root), not in public_html/.
+
+2. Confirm app.baseURL in .env
+
+- Set app.baseURL to your real public URL, including trailing slash.
+- Example: app.baseURL = 'https://example.com/'
+- If deployed in a subfolder, include it.
+- Example: app.baseURL = 'https://example.com/stats/'
+
+3. Confirm writable permissions
+
+- During install, sitecounter/.env must be writable so installer can persist settings.
+- Runtime folders must be writable: writable/, writable/cache/, writable/logs/, writable/session/, writable/uploads/.
+
+4. Confirm public/index.php path wiring
+
+- Verify public_html/index.php points to the correct app, system, and writable paths outside web root.
+- Wrong paths can make the app load the wrong root and miss .env.
+- SiteCounter now checks common layouts automatically, but if your host uses a custom layout, set a server env var:
+	SITECOUNTER_PATHS=/absolute/path/to/sitecounter/app/Config/Paths.php
+- If you cannot set env vars in your host panel, edit public_html/index.php and hardcode the correct Paths.php path.
+
+5. Confirm URL rewriting
+
+- Ensure your host rewrite rules route requests to index.php.
+- If rewrite is broken, /install/run can return an HTML error page instead of JSON.
+
+6. Confirm installer endpoint response
+
+- Open browser dev tools Network tab and inspect POST to /install/run.
+- If response Content-Type is text/html, fix the server-side error first.
+- Check writable/logs for the matching PHP/CodeIgniter error entry.
+
+7. Confirm HTTPS/proxy handling
+
+- Behind a reverse proxy/CDN, ensure forwarded HTTPS headers are set correctly.
+- If scheme detection is wrong, app.baseURL may be written as http instead of https.
+
+8. Clear stale cache/session state
+
+- Clear sitecounter/writable/cache/ and retry install.
+- Start a fresh browser session if redirects are sticky.
+
 ## Running Tests
 
 Run all tests:
