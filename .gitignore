@@ -1,1 +1,5 @@
 *.db
+sitecounter/.env
+sitecounter/writable/
+sitecounter/build/logs/
+sitecounter/vendor/

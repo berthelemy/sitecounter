@@ -76,13 +76,13 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: chart displays correct daily values
 
 ## Phase 9: Testing + Version + Open Source
-- [ ] Write PHPUnit unit tests for models and validation
+- [x] Write PHPUnit unit tests for models and validation
 - [x] Write integration tests for password reset controller flow (magic-link reset mode + normal password change requirement)
 - [x] Document manual acceptance testing cases
-- [ ] Implement Git workflow and branch strategy
-- [ ] Add README, LICENSE, CONTRIBUTING
-- [ ] Add .gitignore for PHP/CI and secrets
-- [x] Run all tests: `vendor/bin/phpunit` (tests pass; coverage-mode warning remains)
+- [x] Implement Git workflow and branch strategy
+- [x] Add README, LICENSE, CONTRIBUTING
+- [x] Add .gitignore for PHP/CI and secrets
+- [x] Run all tests: `vendor/bin/phpunit` (run with `XDEBUG_MODE=coverage`; tests pass)
 - [ ] Tag release using Git and push tags
 - [x] Manual check: all tests pass
 - [ ] Manual check: release tag exists in remote

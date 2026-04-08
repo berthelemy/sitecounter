@@ -1,13 +1,12 @@
 {
-    "name": "codeigniter4/appstarter",
-    "description": "CodeIgniter4 starter app",
-    "license": "MIT",
+    "name": "berthelemy/sitecounter",
+    "description": "Self-hosted website analytics tracker built with CodeIgniter 4",
+    "license": "GPL-3.0-or-later",
     "type": "project",
-    "homepage": "https://codeigniter.com",
+    "homepage": "https://github.com/berthelemy/sitecounter",
     "support": {
-        "forum": "https://forum.codeigniter.com/",
-        "source": "https://github.com/codeigniter4/CodeIgniter4",
-        "slack": "https://codeigniterchat.slack.com"
+        "source": "https://github.com/berthelemy/sitecounter",
+        "issues": "https://github.com/berthelemy/sitecounter/issues"
     },
     "require": {
         "php": "^8.2",
@@ -39,6 +38,8 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "XDEBUG_MODE=coverage phpunit",
+        "test:unit": "phpunit tests/unit",
+        "test:session": "phpunit tests/session"
     }
 }
