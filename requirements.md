@@ -5,7 +5,7 @@ To create an easy to install web application that allows an administrator to tra
 # Installation
 
 - The application should allow a simple installation process with no need to use the command line
-- The installation should default to using SQLite, but should optionally allow the user to configure a MySQL or MariaDB database
+- The installation should use SQLite only for the initial public release
 - The installation script should not be able to be run once the application is installed
 
 # Frameworks

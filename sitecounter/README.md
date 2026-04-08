@@ -65,5 +65,5 @@ PHP version 8.2 or higher is required, with the following extensions installed:
 Additionally, make sure that the following extensions are enabled in your PHP:
 
 - json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
+- [sqlite3](http://php.net/manual/en/book.sqlite3.php) for SQLite database support
 - [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library

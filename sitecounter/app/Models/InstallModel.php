@@ -25,7 +25,7 @@ class InstallModel extends Model
     }
 
     /**
-     * Run installation for the selected database driver.
+     * Run installation for SQLite.
      *
      * @param array<string, mixed> $input
      */
@@ -38,7 +38,8 @@ class InstallModel extends Model
 
         try {
             // Use a fresh migration service so it picks up runtime DB settings.
-            $migration = \Config\Services::migrations(false);
+            $migration = \Config\Services::migrations(null, null, false);
+            $migration->setNamespace(null);
             $migration->latest();
 
             $db = \Config\Database::connect($dbConfig, false);
@@ -64,69 +65,28 @@ class InstallModel extends Model
     {
         $driver = strtolower(trim((string) ($input['db_driver'] ?? 'sqlite')));
 
-        if ($driver === 'sqlite') {
-            $database = trim((string) ($input['sqlite_database'] ?? 'sitecounter.db'));
-            if ($database === '') {
-                throw new RuntimeException(lang('SiteCounter.messages.install_db_sqlite_name_required'));
-            }
-
-            return [
-                'hostname'   => 'localhost',
-                'database'   => $database,
-                'username'   => '',
-                'password'   => '',
-                'DBDriver'   => 'SQLite3',
-                'DBPrefix'   => '',
-                'port'       => '',
-                'charset'    => 'utf8',
-                'DBCollat'   => '',
-                'DBDebug'    => true,
-                'foreignKeys' => true,
-                'busyTimeout' => 1000,
-                'dateFormat' => [
-                    'date'     => 'Y-m-d',
-                    'datetime' => 'Y-m-d H:i:s',
-                    'time'     => 'H:i:s',
-                ],
-            ];
-        }
-
-        if ($driver !== 'mysql' && $driver !== 'mariadb') {
+        if ($driver !== 'sqlite') {
             throw new RuntimeException(lang('SiteCounter.messages.install_db_driver_invalid'));
         }
 
-        $hostname = trim((string) ($input['hostname'] ?? 'localhost'));
-        $database = trim((string) ($input['database'] ?? ''));
-        $username = trim((string) ($input['username'] ?? ''));
-        $password = (string) ($input['password'] ?? '');
-        $port = trim((string) ($input['port'] ?? '3306'));
-
-        if ($hostname === '' || $database === '' || $username === '' || $port === '') {
-            throw new RuntimeException(lang('SiteCounter.messages.install_db_required_fields'));
-        }
-
-        if (! ctype_digit($port)) {
-            throw new RuntimeException(lang('SiteCounter.messages.install_db_port_invalid'));
+        $database = trim((string) ($input['sqlite_database'] ?? 'sitecounter.db'));
+        if ($database === '') {
+            throw new RuntimeException(lang('SiteCounter.messages.install_db_sqlite_name_required'));
         }
 
         return [
-            'hostname'   => $hostname,
+            'hostname'   => 'localhost',
             'database'   => $database,
-            'username'   => $username,
-            'password'   => $password,
-            'DBDriver'   => 'MySQLi',
+            'username'   => '',
+            'password'   => '',
+            'DBDriver'   => 'SQLite3',
             'DBPrefix'   => '',
-            'pConnect'   => false,
             'DBDebug'    => true,
-            'charset'    => 'utf8mb4',
-            'DBCollat'   => 'utf8mb4_general_ci',
-            'swapPre'    => '',
-            'encrypt'    => false,
-            'compress'   => false,
-            'strictOn'   => false,
-            'failover'   => [],
-            'port'       => (int) $port,
-            'foundRows'  => false,
+            'charset'    => 'utf8',
+            'DBCollat'   => '',
+            'port'       => '',
+            'foreignKeys' => true,
+            'busyTimeout' => 1000,
             'dateFormat' => [
                 'date'     => 'Y-m-d',
                 'datetime' => 'Y-m-d H:i:s',
@@ -140,30 +100,16 @@ class InstallModel extends Model
      */
     private function testDatabaseConnection(array $dbConfig): void
     {
-        $driver = strtoupper((string) $dbConfig['DBDriver']);
+        $sqlitePath = $this->resolveSqlitePath((string) $dbConfig['database']);
+        $directory = dirname($sqlitePath);
 
-        if ($driver === 'SQLITE3') {
-            $sqlitePath = $this->resolveSqlitePath((string) $dbConfig['database']);
-            $directory = dirname($sqlitePath);
-
-            if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
-                throw new RuntimeException(lang('SiteCounter.messages.install_db_sqlite_dir_failed'));
-            }
-
-            try {
-                $sqlite = new \SQLite3($sqlitePath);
-                $sqlite->close();
-                return;
-            } catch (\Throwable $e) {
-                throw new RuntimeException(lang('SiteCounter.messages.install_db_connection_failed', [$e->getMessage()]));
-            }
+        if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+            throw new RuntimeException(lang('SiteCounter.messages.install_db_sqlite_dir_failed'));
         }
 
         try {
-            $db = \Config\Database::connect($dbConfig, false);
-            $db->initialize();
-            $db->query('SELECT 1');
-            $db->close();
+            $sqlite = new \SQLite3($sqlitePath);
+            $sqlite->close();
         } catch (\Throwable $e) {
             throw new RuntimeException(lang('SiteCounter.messages.install_db_connection_failed', [$e->getMessage()]));
         }

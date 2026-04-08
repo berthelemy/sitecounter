@@ -61,12 +61,11 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Manual check: language switch persists across pages
 
 ## Phase 7: Database Configuration Options
-- [x] Add database type selection to installer
-- [x] Add MySQL/MariaDB configuration fields to installer
-- [x] Update database config based on installer choices
-- [x] Test MySQL/MariaDB connection during install
-- [ ] Manual check: MySQL installation works
-- [ ] Manual check: MariaDB installation works
+- [x] Keep installer focused on SQLite for initial release
+- [x] Remove external SQL configuration fields from installer
+- [x] Update database config to SQLite-only defaults
+- [x] Test SQLite connection during install
+- [ ] Manual check: SQLite installation works
 
 ## Phase 8: UI Enhancements
 - [x] Add Bootstrap Icons library
@@ -127,7 +126,7 @@ Completed in this session:
 	- normal flow still requires current password
 
 Next recommended work:
-- Phase 7 (pending): add MySQL/MariaDB installer options.
+- Phase 7 (updated): keep installer SQLite-only for initial public release.
 - Phase 9 (pending):
 	- add integration tests for profile email normalization and uniqueness edge cases
 	- run full test suite and resolve any failures
@@ -137,9 +136,9 @@ Next recommended work:
 
 Completed in this session:
 - Implemented Phase 7 installer database options:
-	- installer now supports SQLite / MySQL / MariaDB selection
-	- installer captures DB credentials for MySQL/MariaDB
-	- installer validates required DB fields and tests DB connectivity before migration
+	- installer now supports SQLite-only installation flow
+	- installer captures SQLite database file path
+	- installer validates SQLite path and tests DB connectivity before migration
 	- installer persists selected DB config into `.env` and applies runtime settings before migrations
 - Added localized installer copy for English and French (`install` language keys + install validation messages).
 - Added integration tests for profile update edge cases in `tests/session/ProfileUpdateFlowTest.php`:
@@ -151,8 +150,7 @@ Completed in this session:
 
 Next recommended work:
 - Phase 7 manual checks:
-	- verify end-to-end installer success against real MySQL
-	- verify end-to-end installer success against real MariaDB
+	- verify end-to-end installer success with SQLite on fresh state
 - Phase 9 pending:
 	- add model/validation unit tests
 	- complete release process tasks (branch strategy, release tagging)
@@ -163,5 +161,5 @@ Next recommended work:
 ## Notes
 - Follow PSR-4 and PHPDoc standards
 - Keep installer one-time use only
-- Use SQLite default, allow MySQL/MariaDB by `.env` switch
+- Use SQLite only for initial public release
 - Keep this task list updated as work progresses

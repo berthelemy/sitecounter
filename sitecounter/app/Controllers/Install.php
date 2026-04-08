@@ -51,7 +51,7 @@ class Install extends BaseController
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => lang('SiteCounter.messages.install_error', [$e->getMessage()])
+                'message' => $e->getMessage()
             ]);
         }
     }

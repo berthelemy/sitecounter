@@ -6,7 +6,6 @@ Use this checklist for release validation across installer, auth/profile, and re
 
 - Start with a fresh application state (uninstalled).
 - Confirm writable permissions for app storage paths.
-- Confirm target database server is reachable for MySQL/MariaDB tests.
 
 ## Installer flow
 
@@ -23,32 +22,6 @@ Use this checklist for release validation across installer, auth/profile, and re
 Expected result:
 - Installer completes and migrations create required tables.
 - Install lockout is enforced after first successful install.
-
-### MySQL installation
-
-1. Open /install on a fresh state.
-2. Select MySQL.
-3. Enter host, port, database name, username, password.
-4. Run installation.
-5. Verify success message and redirect.
-6. Verify .env database settings were updated for MySQLi.
-
-Expected result:
-- Connection test passes before migrations.
-- Tables are created in the target MySQL database.
-
-### MariaDB installation
-
-1. Open /install on a fresh state.
-2. Select MariaDB.
-3. Enter host, port, database name, username, password.
-4. Run installation.
-5. Verify success message and redirect.
-6. Verify .env database settings were updated for MySQLi.
-
-Expected result:
-- Connection test passes before migrations.
-- Tables are created in the target MariaDB database.
 
 ## Authentication and profile
 
