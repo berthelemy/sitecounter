@@ -92,6 +92,7 @@ return [
         'install_button' => 'Installer SiteCounter',
         'installing_message' => 'Installation en cours... Veuillez patienter.',
         'install_failed_prefix' => 'Echec de l\'installation : ',
+        'unexpected_response' => 'Echec de l\'installation a cause d\'une reponse serveur inattendue.',
     ],
 
     'websites' => [
@@ -183,6 +184,7 @@ return [
         'install_db_connection_failed' => 'Le test de connexion a la base a echoue : {0}',
         'install_env_read_failed' => 'Impossible de lire le fichier de configuration d\'environnement.',
         'install_env_write_failed' => 'Impossible d\'ecrire le fichier de configuration d\'environnement.',
+        'install_base_url_invalid' => 'L\'URL de base de l\'application est invalide.',
         'install_admin_email_required' => 'L\'e-mail admin est obligatoire.',
         'install_admin_email_invalid' => 'L\'e-mail admin doit etre une adresse valide.',
         'install_admin_password_min' => 'Le mot de passe admin doit contenir au moins 8 caracteres.',

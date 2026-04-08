@@ -35,7 +35,7 @@ class InstallModel extends Model
     {
         $dbConfig = $this->buildDatabaseConfig($input);
         $this->testDatabaseConnection($dbConfig);
-        $this->persistDatabaseConfigToEnv($dbConfig);
+        $this->persistDatabaseConfigToEnv($dbConfig, $input);
         $this->applyRuntimeDatabaseConfig($dbConfig);
 
         try {
@@ -121,8 +121,9 @@ class InstallModel extends Model
 
     /**
      * @param array<string, mixed> $dbConfig
+     * @param array<string, mixed> $input
      */
-    private function persistDatabaseConfigToEnv(array $dbConfig): void
+    private function persistDatabaseConfigToEnv(array $dbConfig, array $input = []): void
     {
         $envPath = ROOTPATH . '.env';
         $content = file_get_contents($envPath);
@@ -140,6 +141,11 @@ class InstallModel extends Model
             'database.default.DBPrefix' => (string) ($dbConfig['DBPrefix'] ?? ''),
             'database.default.port'     => (string) ($dbConfig['port'] ?? ''),
         ];
+
+        $appBaseURL = trim((string) ($input['app_base_url'] ?? ''));
+        if ($appBaseURL !== '') {
+            $updates['app.baseURL'] = $this->normalizeBaseURL($appBaseURL);
+        }
 
         foreach ($updates as $key => $value) {
             $content = $this->upsertEnvValue($content, $key, $value);
@@ -208,6 +214,17 @@ class InstallModel extends Model
         }
 
         return '\'' . str_replace('\'', '\\\'', $value) . '\'';
+    }
+
+    private function normalizeBaseURL(string $value): string
+    {
+        $baseURL = rtrim(trim($value), '/') . '/';
+
+        if (! filter_var($baseURL, FILTER_VALIDATE_URL)) {
+            throw new RuntimeException(lang('SiteCounter.messages.install_base_url_invalid'));
+        }
+
+        return $baseURL;
     }
 
     /**

@@ -68,6 +68,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const installRunUrl = <?= json_encode(site_url('install/run'), JSON_UNESCAPED_SLASHES) ?>;
+        const homeUrl = <?= json_encode(site_url('/'), JSON_UNESCAPED_SLASHES) ?>;
+
         function getInstallPayload() {
             return {
                 db_driver: 'sqlite',
@@ -93,7 +96,7 @@
             status.classList.remove('d-none');
 
             try {
-                const response = await fetch('/install/run', {
+                const response = await fetch(installRunUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,13 +105,22 @@
                     body: JSON.stringify(payload)
                 });
 
+                const contentType = response.headers.get('content-type') || '';
+
+                if (!contentType.includes('application/json')) {
+                    const bodyText = await response.text();
+                    const fallbackMessage = '<?= esc(lang('SiteCounter.install.unexpected_response')) ?>';
+                    const serverSnippet = bodyText.replace(/\s+/g, ' ').trim().slice(0, 160);
+                    throw new Error(serverSnippet ? `${fallbackMessage} ${serverSnippet}` : fallbackMessage);
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
                     status.className = 'alert alert-success';
                     status.textContent = result.message;
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.href = homeUrl;
                     }, 2000);
                 } else {
                     status.className = 'alert alert-danger';

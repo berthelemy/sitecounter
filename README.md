@@ -46,11 +46,14 @@ Use the standard secure layout:
 - Copy the contents of sitecounter/public/ into public_html/.
 - Keep sitecounter/app/, sitecounter/writable/, sitecounter/vendor/, and other project files outside public_html/.
 - Adjust paths in public_html/index.php so framework and app paths resolve correctly.
-- Set production values in .env, including app.baseURL and SQLite database path.
+- Copy sitecounter/env to sitecounter/.env before running the web installer.
+- During installation, SiteCounter now auto-detects the current host/path and writes app.baseURL to .env.
+- After install, verify app.baseURL in .env matches your final public URL (with trailing slash), especially if you use subfolders or force HTTPS.
 
 ## Configuration Notes
 
 - Copy sitecounter/env to sitecounter/.env and set production options before go-live.
+- If your host URL is already known, you can pre-set app.baseURL in sitecounter/.env before installation.
 - Ensure sitecounter/writable/, sitecounter/writable/cache/, sitecounter/writable/logs/, sitecounter/writable/session/, and sitecounter/writable/uploads/ are writable by the web server user.
 - For production, set:
 

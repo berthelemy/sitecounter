@@ -92,6 +92,7 @@ return [
         'install_button' => 'Install SiteCounter',
         'installing_message' => 'Installing... Please wait.',
         'install_failed_prefix' => 'Installation failed: ',
+        'unexpected_response' => 'Installation failed due to an unexpected server response.',
     ],
 
     'websites' => [
@@ -183,6 +184,7 @@ return [
         'install_db_connection_failed' => 'Database connection test failed: {0}',
         'install_env_read_failed' => 'Could not read environment configuration file.',
         'install_env_write_failed' => 'Could not write environment configuration file.',
+        'install_base_url_invalid' => 'The application base URL is invalid.',
         'install_admin_email_required' => 'Admin email is required.',
         'install_admin_email_invalid' => 'Admin email must be a valid email address.',
         'install_admin_password_min' => 'Admin password must be at least 8 characters.',

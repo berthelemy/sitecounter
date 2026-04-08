@@ -41,6 +41,10 @@ class Install extends BaseController
             $payload = $this->request->getPost();
         }
 
+        if (! isset($payload['app_base_url']) || trim((string) $payload['app_base_url']) === '') {
+            $payload['app_base_url'] = $this->inferBaseUrlFromRequest();
+        }
+
         // Run installation
         try {
             $result = $installModel->install($payload);
@@ -54,5 +58,23 @@ class Install extends BaseController
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Infer the installation base URL from the current request URI.
+     */
+    private function inferBaseUrlFromRequest(): string
+    {
+        $uri = $this->request->getUri();
+        $path = '/' . ltrim($uri->getPath(), '/');
+
+        $basePath = preg_replace('#/(index\.php/)?install(?:/run)?$#', '/', $path) ?? '/';
+        $basePath = '/' . trim($basePath, '/');
+
+        if ($basePath === '/') {
+            return $uri->getScheme() . '://' . $uri->getAuthority() . '/';
+        }
+
+        return $uri->getScheme() . '://' . $uri->getAuthority() . rtrim($basePath, '/') . '/';
     }
 }
