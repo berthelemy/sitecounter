@@ -65,7 +65,7 @@ This file tracks progress for all implementation phases with manual verification
 - [x] Remove external SQL configuration fields from installer
 - [x] Update database config to SQLite-only defaults
 - [x] Test SQLite connection during install
-- [ ] Manual check: SQLite installation works
+- [x] Manual check: SQLite installation works
 
 ## Phase 8: UI Enhancements
 - [x] Add Bootstrap Icons library
