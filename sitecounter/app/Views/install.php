@@ -27,6 +27,32 @@
                             <div class="form-text"><?= lang('SiteCounter.install.sqlite_db_help') ?></div>
                         </div>
 
+                        <hr class="my-4">
+
+                        <h5 class="mb-3"><?= lang('SiteCounter.install.admin_section_title') ?></h5>
+
+                        <div class="mb-3">
+                            <label for="admin-email" class="form-label"><?= lang('SiteCounter.install.admin_email_label') ?></label>
+                            <input type="email" id="admin-email" class="form-control" value="admin@sitecounter.local" maxlength="255" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="admin-password" class="form-label"><?= lang('SiteCounter.install.admin_password_label') ?></label>
+                            <input type="password" id="admin-password" class="form-control" minlength="8" maxlength="255" required>
+                            <div class="form-text"><?= lang('SiteCounter.install.admin_password_help') ?></div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="admin-firstname" class="form-label"><?= lang('SiteCounter.install.admin_firstname_label') ?></label>
+                                <input type="text" id="admin-firstname" class="form-control" value="Site" maxlength="50">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="admin-lastname" class="form-label"><?= lang('SiteCounter.install.admin_lastname_label') ?></label>
+                                <input type="text" id="admin-lastname" class="form-control" value="Admin" maxlength="50">
+                            </div>
+                        </div>
+
                         <div id="install-status" class="alert d-none"></div>
 
                         <button id="install-btn" class="btn btn-primary btn-lg w-100" onclick="runInstall()">
@@ -45,7 +71,11 @@
         function getInstallPayload() {
             return {
                 db_driver: 'sqlite',
-                sqlite_database: document.getElementById('sqlite-database').value.trim()
+                sqlite_database: document.getElementById('sqlite-database').value.trim(),
+                admin_email: document.getElementById('admin-email').value.trim(),
+                admin_password: document.getElementById('admin-password').value,
+                admin_firstname: document.getElementById('admin-firstname').value.trim(),
+                admin_lastname: document.getElementById('admin-lastname').value.trim()
             };
         }
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use CodeIgniter\Shield\Entities\User as ShieldUser;
+use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
 use RuntimeException;
 
 class InstallModel extends Model
@@ -43,6 +45,8 @@ class InstallModel extends Model
             $migration->latest();
 
             $db = \Config\Database::connect($dbConfig, false);
+
+            $this->createAdminUser($input);
 
             // Mark as installed
             $db->table('install')->insert([
@@ -204,5 +208,72 @@ class InstallModel extends Model
         }
 
         return '\'' . str_replace('\'', '\\\'', $value) . '\'';
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     */
+    private function createAdminUser(array $input): void
+    {
+        $email = trim((string) ($input['admin_email'] ?? ''));
+        $password = (string) ($input['admin_password'] ?? '');
+        $firstname = trim((string) ($input['admin_firstname'] ?? 'Site'));
+        $lastname = trim((string) ($input['admin_lastname'] ?? 'Admin'));
+
+        if ($email === '') {
+            throw new RuntimeException(lang('SiteCounter.messages.install_admin_email_required'));
+        }
+
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException(lang('SiteCounter.messages.install_admin_email_invalid'));
+        }
+
+        if (mb_strlen($password) < 8) {
+            throw new RuntimeException(lang('SiteCounter.messages.install_admin_password_min'));
+        }
+
+        if ($firstname === '') {
+            $firstname = 'Site';
+        }
+
+        if ($lastname === '') {
+            $lastname = 'Admin';
+        }
+
+        try {
+            $users = model(ShieldUserModel::class);
+            if (! $users instanceof ShieldUserModel) {
+                throw new RuntimeException(lang('SiteCounter.messages.install_admin_create_failed', ['User provider unavailable']));
+            }
+
+            $existingUser = $users->findByCredentials(['email' => $email]);
+            if ($existingUser !== null) {
+                throw new RuntimeException(lang('SiteCounter.messages.email_already_registered'));
+            }
+
+            $user = new ShieldUser([
+                'username' => 'admin',
+                'active'   => 1,
+            ]);
+            $user->email = $email;
+            $user->password = $password;
+
+            $users->save($user);
+
+            $createdUser = $users->findByCredentials(['email' => $email]);
+            if ($createdUser === null) {
+                throw new RuntimeException('Admin user record was not created.');
+            }
+
+            $userModel = new UserModel();
+            $userModel->update($createdUser->id, [
+                'firstname' => $firstname,
+                'lastname'  => $lastname,
+            ]);
+
+            $createdUser->addGroup('admin');
+        } catch (\Throwable $e) {
+            throw new RuntimeException(lang('SiteCounter.messages.install_admin_create_failed', [$e->getMessage()]));
+        }
     }
 }
