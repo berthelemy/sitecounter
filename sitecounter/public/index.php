@@ -66,8 +66,36 @@ if (!class_exists('Locale')) {
 
 // LOAD OUR PATHS CONFIG FILE
 // This is the line that might need to be changed, depending on your folder structure.
-require FCPATH . '../app/Config/Paths.php';
-// ^^^ Change this line if you move your application folder
+$pathsConfig = null;
+
+$configuredPaths = getenv('SITECOUNTER_PATHS');
+if (is_string($configuredPaths) && $configuredPaths !== '' && is_file($configuredPaths)) {
+    $pathsConfig = $configuredPaths;
+}
+
+if ($pathsConfig === null) {
+    $candidates = [
+        FCPATH . '../app/Config/Paths.php',
+        FCPATH . '../sitecounter/app/Config/Paths.php',
+        dirname(FCPATH, 2) . '/sitecounter/app/Config/Paths.php',
+    ];
+
+    foreach ($candidates as $candidate) {
+        if (is_file($candidate)) {
+            $pathsConfig = $candidate;
+            break;
+        }
+    }
+}
+
+if ($pathsConfig === null) {
+    header('HTTP/1.1 500 Internal Server Error', true, 500);
+    echo 'Bootstrap error: unable to locate app/Config/Paths.php. '
+        . 'Set SITECOUNTER_PATHS or update public/index.php path mapping.';
+    exit(1);
+}
+
+require $pathsConfig;
 
 $paths = new Paths();
 
