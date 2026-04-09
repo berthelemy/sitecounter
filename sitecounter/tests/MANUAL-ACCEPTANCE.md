@@ -13,7 +13,7 @@ Use this checklist for release validation across installer, auth/profile, and re
 
 1. Open /install.
 2. Keep database type as SQLite.
-3. Set SQLite filename (for example: sitecounter.db).
+3. Set SQLite filename (for example: writable/database/sitecounter.db).
 4. Run installation.
 5. Verify success message and redirect.
 6. Verify /install cannot run again after install.

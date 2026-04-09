@@ -31,7 +31,7 @@
 #--------------------------------------------------------------------
 
 # database.default.hostname = localhost
-# database.default.database = sitecounter.db
+# database.default.database = writable/database/sitecounter.db
 # database.default.username =
 # database.default.password =
 # database.default.DBDriver = SQLite3

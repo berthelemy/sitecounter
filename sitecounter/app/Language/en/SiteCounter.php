@@ -82,7 +82,7 @@ return [
         'title' => 'SiteCounter Installation',
         'intro' => 'Welcome to SiteCounter installation wizard. This will set up the database and prepare your application.',
         'sqlite_db_label' => 'SQLite Database File',
-        'sqlite_db_help' => 'Use a relative filename like sitecounter.db or an absolute path.',
+        'sqlite_db_help' => 'Use a relative filename like writable/database/sitecounter.db or an absolute path.',
         'admin_section_title' => 'Administrator Account',
         'admin_email_label' => 'Admin Email',
         'admin_password_label' => 'Admin Password',

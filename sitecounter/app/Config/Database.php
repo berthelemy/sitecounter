@@ -29,7 +29,7 @@ class Database extends Config
         'hostname'     => 'localhost',
         'username'     => '',
         'password'     => '',
-        'database'     => 'sitecounter.db',
+        'database'     => WRITEPATH . 'database' . DIRECTORY_SEPARATOR . 'sitecounter.db',
         'DBDriver'     => 'SQLite3',
         'DBPrefix'     => '',
         'pConnect'     => false,

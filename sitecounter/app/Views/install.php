@@ -23,7 +23,7 @@
 
                         <div id="sqlite-fields" class="mb-3">
                             <label for="sqlite-database" class="form-label"><?= lang('SiteCounter.install.sqlite_db_label') ?></label>
-                            <input type="text" id="sqlite-database" class="form-control" value="sitecounter.db" maxlength="255">
+                            <input type="text" id="sqlite-database" class="form-control" value="writable/database/sitecounter.db" maxlength="255">
                             <div class="form-text"><?= lang('SiteCounter.install.sqlite_db_help') ?></div>
                         </div>
 

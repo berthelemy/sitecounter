@@ -73,10 +73,12 @@ class InstallModel extends Model
             throw new RuntimeException(lang('SiteCounter.messages.install_db_driver_invalid'));
         }
 
-        $database = trim((string) ($input['sqlite_database'] ?? 'sitecounter.db'));
-        if ($database === '') {
+        $databaseInput = trim((string) ($input['sqlite_database'] ?? 'writable/database/sitecounter.db'));
+        if ($databaseInput === '') {
             throw new RuntimeException(lang('SiteCounter.messages.install_db_sqlite_name_required'));
         }
+
+        $database = $this->resolveSqlitePath($databaseInput);
 
         return [
             'hostname'   => 'localhost',
