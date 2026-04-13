@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use CodeIgniter\Database\BaseBuilder;
 
 class VisitModel extends Model
 {
@@ -54,17 +55,28 @@ class VisitModel extends Model
     protected $cleanValidationRules = true;
 
     /**
+     * Cached allowed URL prefixes per website.
+     *
+     * @var array<int, list<string>>
+     */
+    private array $allowedUrlPrefixes = [];
+
+    /**
      * Get unique visitors for a website in a date range
      */
     public function getUniqueVisitors(int $websiteId, string $startDate, string $endDate): int
     {
-        $row = $this->db->table('visits')
-                       ->select('COUNT(DISTINCT visitor_id) as count', false)
-                       ->where('website_id', $websiteId)
-                       ->where('timestamp >=', $startDate)
-                       ->where('timestamp <=', $endDate)
-                       ->get()
-                       ->getRowArray();
+        $builder = $this->db->table('visits')
+            ->select('COUNT(DISTINCT visitor_id) as count', false)
+            ->where('website_id', $websiteId)
+            ->where('timestamp >=', $startDate)
+            ->where('timestamp <=', $endDate);
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        $row = $builder
+            ->get()
+            ->getRowArray();
 
         return (int) ($row['count'] ?? 0);
     }
@@ -74,10 +86,14 @@ class VisitModel extends Model
      */
     public function getTotalVisits(int $websiteId, string $startDate, string $endDate): int
     {
-        return $this->where('website_id', $websiteId)
-                   ->where('timestamp >=', $startDate)
-                   ->where('timestamp <=', $endDate)
-                   ->countAllResults();
+        $builder = $this->builder()
+            ->where('website_id', $websiteId)
+            ->where('timestamp >=', $startDate)
+            ->where('timestamp <=', $endDate);
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        return (int) $builder->countAllResults();
     }
 
     /**
@@ -85,12 +101,16 @@ class VisitModel extends Model
      */
     public function getTopPages(int $websiteId, int $limit = 10): array
     {
-        return $this->select('url, COUNT(*) as visits')
-                   ->where('website_id', $websiteId)
-                   ->groupBy('url')
-                   ->orderBy('visits', 'DESC')
-                   ->limit($limit)
-                   ->findAll();
+        $builder = $this->builder()
+            ->select('url, COUNT(*) as visits')
+            ->where('website_id', $websiteId)
+            ->groupBy('url')
+            ->orderBy('visits', 'DESC')
+            ->limit($limit);
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        return $builder->get()->getResultArray();
     }
 
     /**
@@ -98,12 +118,16 @@ class VisitModel extends Model
      */
     public function getBottomPages(int $websiteId, int $limit = 10): array
     {
-        return $this->select('url, COUNT(*) as visits')
-                   ->where('website_id', $websiteId)
-                   ->groupBy('url')
-                   ->orderBy('visits', 'ASC')
-                   ->limit($limit)
-                   ->findAll();
+        $builder = $this->builder()
+            ->select('url, COUNT(*) as visits')
+            ->where('website_id', $websiteId)
+            ->groupBy('url')
+            ->orderBy('visits', 'ASC')
+            ->limit($limit);
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        return $builder->get()->getResultArray();
     }
 
     /**
@@ -111,13 +135,17 @@ class VisitModel extends Model
      */
     public function getDailyVisits(int $websiteId, string $startDate, string $endDate): array
     {
-        return $this->select("DATE(timestamp) as date, COUNT(*) as visits")
-                   ->where('website_id', $websiteId)
-                   ->where('timestamp >=', $startDate)
-                   ->where('timestamp <=', $endDate)
-                   ->groupBy('DATE(timestamp)')
-                   ->orderBy('date', 'ASC')
-                   ->findAll();
+        $builder = $this->builder()
+            ->select("DATE(timestamp) as date, COUNT(*) as visits")
+            ->where('website_id', $websiteId)
+            ->where('timestamp >=', $startDate)
+            ->where('timestamp <=', $endDate)
+            ->groupBy('DATE(timestamp)')
+            ->orderBy('date', 'ASC');
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        return $builder->get()->getResultArray();
     }
 
     /**
@@ -125,7 +153,10 @@ class VisitModel extends Model
      */
     public function getTotalVisitsAllTime(int $websiteId): int
     {
-        return $this->where('website_id', $websiteId)->countAllResults();
+        $builder = $this->builder()->where('website_id', $websiteId);
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        return (int) $builder->countAllResults();
     }
 
     /**
@@ -133,9 +164,13 @@ class VisitModel extends Model
      */
     public function getTotalUniqueVisitorsAllTime(int $websiteId): int
     {
-        $row = $this->db->table('visits')
+        $builder = $this->db->table('visits')
             ->select('COUNT(DISTINCT visitor_id) as count', false)
-            ->where('website_id', $websiteId)
+            ->where('website_id', $websiteId);
+
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
+        $row = $builder
             ->get()
             ->getRowArray();
 
@@ -153,6 +188,8 @@ class VisitModel extends Model
             ->select('SUBSTR(timestamp, 1, 7) as month_key, COUNT(*) as visits, COUNT(DISTINCT visitor_id) as unique_visitors', false)
             ->where('website_id', $websiteId);
 
+        $this->applyTrackedDomainFilter($builder, $websiteId);
+
         if ($startDate !== null) {
             $builder->where('timestamp >=', $startDate);
         }
@@ -166,6 +203,84 @@ class VisitModel extends Model
             ->orderBy('month_key', 'ASC')
             ->get()
             ->getResultArray();
+    }
+
+    /**
+     * Restrict report queries to URLs from the website's tracked domain.
+     */
+    private function applyTrackedDomainFilter(BaseBuilder $builder, int $websiteId): void
+    {
+        $allowedPrefixes = $this->getAllowedUrlPrefixes($websiteId);
+
+        if ($allowedPrefixes === []) {
+            $builder->where('1 = 0', null, false);
+            return;
+        }
+
+        $builder->groupStart();
+        $isFirst = true;
+
+        foreach ($allowedPrefixes as $prefix) {
+            if ($isFirst) {
+                $builder->where('url =', $prefix);
+                $builder->orWhere('url LIKE', $prefix . '/%');
+                $builder->orWhere('url LIKE', $prefix . ':%');
+                $isFirst = false;
+                continue;
+            }
+
+            $builder->orWhere('url =', $prefix);
+            $builder->orWhere('url LIKE', $prefix . '/%');
+            $builder->orWhere('url LIKE', $prefix . ':%');
+        }
+
+        $builder->groupEnd();
+    }
+
+    /**
+     * Build allowed URL prefixes for the tracked website domain.
+     *
+     * @return list<string>
+     */
+    private function getAllowedUrlPrefixes(int $websiteId): array
+    {
+        if (array_key_exists($websiteId, $this->allowedUrlPrefixes)) {
+            return $this->allowedUrlPrefixes[$websiteId];
+        }
+
+        $website = $this->db->table('websites')
+            ->select('url')
+            ->where('id', $websiteId)
+            ->get()
+            ->getRowArray();
+
+        $websiteUrl = (string) ($website['url'] ?? '');
+        $host = strtolower((string) parse_url($websiteUrl, PHP_URL_HOST));
+        $host = trim($host, '.');
+
+        if ($host === '') {
+            $this->allowedUrlPrefixes[$websiteId] = [];
+            return [];
+        }
+
+        $hosts = [$host];
+        if (str_starts_with($host, 'www.')) {
+            $hosts[] = substr($host, 4);
+        } else {
+            $hosts[] = 'www.' . $host;
+        }
+
+        $hosts = array_values(array_unique(array_filter($hosts, static fn (string $value): bool => $value !== '')));
+
+        $prefixes = [];
+        foreach ($hosts as $allowedHost) {
+            $prefixes[] = 'http://' . $allowedHost;
+            $prefixes[] = 'https://' . $allowedHost;
+        }
+
+        $this->allowedUrlPrefixes[$websiteId] = array_values(array_unique($prefixes));
+
+        return $this->allowedUrlPrefixes[$websiteId];
     }
 
     /**
