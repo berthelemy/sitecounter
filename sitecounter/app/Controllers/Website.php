@@ -238,6 +238,9 @@ class Website extends BaseController
         return <<<SCRIPT
 <script>
 (function() {
+    var consentStorageKey = 'sitecounter_cookie_consent';
+    var visitorCookieName = 'sitecounter_visitor_id';
+
     function getCookie(name) {
         var cookies = document.cookie ? document.cookie.split('; ') : [];
         for (var i = 0; i < cookies.length; i++) {
@@ -282,23 +285,112 @@ class Website extends BaseController
         });
     }
 
-    var cookieName = 'sitecounter_visitor_id';
-    var visitorId = getCookie(cookieName);
-
-    // Keep continuity with existing installs that used localStorage first.
-    if (!visitorId) {
-        visitorId = localStorage.getItem(cookieName);
+    function getConsentChoice() {
+        try {
+            return window.localStorage.getItem(consentStorageKey);
+        } catch (e) {
+            return null;
+        }
     }
 
-    if (!visitorId) {
-        visitorId = generateUuid();
+    function saveConsentChoice(choice) {
+        try {
+            window.localStorage.setItem(consentStorageKey, choice);
+        } catch (e) {
+            // Ignore persistence errors (private mode or blocked storage).
+        }
     }
 
-    var cookieStored = setCookie(cookieName, visitorId, 365);
-    localStorage.setItem(cookieName, visitorId);
+    function createConsentBanner(onAllow, onDeny) {
+        if (!document.body) {
+            return;
+        }
 
-    if (!cookieStored && window.console && typeof window.console.warn === 'function') {
-        window.console.warn('SiteCounter: Could not persist visitor cookie. Using localStorage fallback only.');
+        var banner = document.createElement('div');
+        banner.id = 'sitecounter-consent-banner';
+        banner.style.position = 'fixed';
+        banner.style.bottom = '16px';
+        banner.style.left = '16px';
+        banner.style.right = '16px';
+        banner.style.maxWidth = '640px';
+        banner.style.margin = '0 auto';
+        banner.style.zIndex = '2147483647';
+        banner.style.background = '#1f2937';
+        banner.style.color = '#ffffff';
+        banner.style.padding = '16px';
+        banner.style.borderRadius = '10px';
+        banner.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.25)';
+        banner.style.fontFamily = 'Arial, sans-serif';
+        banner.style.fontSize = '14px';
+        banner.style.lineHeight = '1.5';
+
+        var text = document.createElement('p');
+        text.style.margin = '0 0 12px';
+        text.textContent = 'I store a single cookie in your browser so that I can count the number of times you visit this site. I don't who you are, and don't use the cookie for any other purpose, nor is it sold or given to anyone else.';
+
+        var buttonRow = document.createElement('div');
+        buttonRow.style.display = 'flex';
+        buttonRow.style.gap = '8px';
+        buttonRow.style.flexWrap = 'wrap';
+
+        var allowButton = document.createElement('button');
+        allowButton.type = 'button';
+        allowButton.textContent = 'Allow cookie';
+        allowButton.style.border = '0';
+        allowButton.style.padding = '8px 12px';
+        allowButton.style.borderRadius = '6px';
+        allowButton.style.cursor = 'pointer';
+        allowButton.style.background = '#10b981';
+        allowButton.style.color = '#ffffff';
+
+        var denyButton = document.createElement('button');
+        denyButton.type = 'button';
+        denyButton.textContent = 'Decline';
+        denyButton.style.border = '1px solid #6b7280';
+        denyButton.style.padding = '8px 12px';
+        denyButton.style.borderRadius = '6px';
+        denyButton.style.cursor = 'pointer';
+        denyButton.style.background = 'transparent';
+        denyButton.style.color = '#ffffff';
+
+        allowButton.addEventListener('click', function() {
+            if (banner.parentNode) {
+                banner.parentNode.removeChild(banner);
+            }
+            onAllow();
+        });
+
+        denyButton.addEventListener('click', function() {
+            if (banner.parentNode) {
+                banner.parentNode.removeChild(banner);
+            }
+            onDeny();
+        });
+
+        buttonRow.appendChild(allowButton);
+        buttonRow.appendChild(denyButton);
+        banner.appendChild(text);
+        banner.appendChild(buttonRow);
+
+        document.body.appendChild(banner);
+    }
+
+    function ensureVisitorIdCookie() {
+        var visitorId = getCookie(visitorCookieName);
+
+        if (!visitorId) {
+            visitorId = generateUuid();
+        }
+
+        var cookieStored = setCookie(visitorCookieName, visitorId, 365);
+        if (!cookieStored) {
+            if (window.console && typeof window.console.warn === 'function') {
+                window.console.warn('SiteCounter: Cookie consent granted, but visitor cookie could not be persisted.');
+            }
+            return null;
+        }
+
+        return visitorId;
     }
 
     function getPageTitle() {
@@ -322,7 +414,7 @@ class Website extends BaseController
         return title;
     }
 
-    function sendVisit() {
+    function sendVisit(visitorId) {
         var data = {
             token: '{$token}',
             visitor_id: visitorId,
@@ -340,10 +432,48 @@ class Website extends BaseController
         xhr.send(JSON.stringify(data));
     }
 
+    function startTrackingAfterConsent() {
+        var visitorId = ensureVisitorIdCookie();
+        if (!visitorId) {
+            return;
+        }
+
+        sendVisit(visitorId);
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', sendVisit, { once: true });
+        document.addEventListener('DOMContentLoaded', function() {
+            var consentChoice = getConsentChoice();
+
+            if (consentChoice === 'allow') {
+                startTrackingAfterConsent();
+                return;
+            }
+
+            if (consentChoice === 'deny') {
+                return;
+            }
+
+            createConsentBanner(function() {
+                saveConsentChoice('allow');
+                startTrackingAfterConsent();
+            }, function() {
+                saveConsentChoice('deny');
+            });
+        }, { once: true });
     } else {
-        sendVisit();
+        var consentChoice = getConsentChoice();
+
+        if (consentChoice === 'allow') {
+            startTrackingAfterConsent();
+        } else if (consentChoice !== 'deny') {
+            createConsentBanner(function() {
+                saveConsentChoice('allow');
+                startTrackingAfterConsent();
+            }, function() {
+                saveConsentChoice('deny');
+            });
+        }
     }
 })();
 </script>
