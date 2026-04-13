@@ -216,12 +216,20 @@ class Website extends BaseController
         $topPages       = $visitModel->getTopPages($website['id'], 10);
         $bottomPages    = $visitModel->getBottomPages($website['id'], 10);
         $dailyVisits    = $visitModel->getDailyVisits($website['id'], $startDate, $endDate);
+        $averageStats   = $visitModel->getAverageMonthlyStats((int) $website['id']);
+        $lastMonthStats = $visitModel->getLastMonthStats((int) $website['id']);
 
         return view('dashboard/websites/report', [
             'website'        => $website,
             'user'           => $user,
             'totalVisits'    => $totalVisits,
             'uniqueVisitors' => $uniqueVisitors,
+            'totalVisitsAllTime' => $visitModel->getTotalVisitsAllTime((int) $website['id']),
+            'totalUniqueVisitorsAllTime' => $visitModel->getTotalUniqueVisitorsAllTime((int) $website['id']),
+            'averageVisitsPerMonth' => $averageStats['average_visits'],
+            'averageUniqueVisitorsPerMonth' => $averageStats['average_unique_visitors'],
+            'visitsLastMonth' => $lastMonthStats['visits'],
+            'uniqueVisitorsLastMonth' => $lastMonthStats['unique_visitors'],
             'topPages'       => $topPages,
             'bottomPages'    => $bottomPages,
             'dailyVisits'    => $dailyVisits,

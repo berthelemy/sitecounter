@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\VisitModel;
+use App\Models\WebsiteModel;
 use CodeIgniter\Shield\Entities\User;
 
 class Dashboard extends BaseController
@@ -32,10 +34,54 @@ class Dashboard extends BaseController
 
         $user = auth()->user();
         $userModel = new \App\Models\UserModel();
+        $websiteModel = new WebsiteModel();
+        $visitModel = new VisitModel();
+
+        $websites = $websiteModel->getUserWebsites($user->id);
+        $dashboardWebsites = [];
+
+        foreach ($websites as $website) {
+            $monthlyStats = $visitModel->getMonthlyStats(
+                (int) $website['id'],
+                date('Y-m-01 00:00:00', strtotime('-5 months')),
+                date('Y-m-t 23:59:59')
+            );
+
+            $monthlyMap = [];
+            foreach ($monthlyStats as $row) {
+                $monthlyMap[(string) ($row['month_key'] ?? '')] = (int) ($row['visits'] ?? 0);
+            }
+
+            $chartLabels = [];
+            $chartValues = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $monthKey = date('Y-m', strtotime("-{$i} months"));
+                $chartLabels[] = date('M Y', strtotime($monthKey . '-01'));
+                $chartValues[] = $monthlyMap[$monthKey] ?? 0;
+            }
+
+            $averageStats = $visitModel->getAverageMonthlyStats((int) $website['id']);
+            $lastMonthStats = $visitModel->getLastMonthStats((int) $website['id']);
+
+            $dashboardWebsites[] = [
+                'website' => $website,
+                'chart' => [
+                    'labels' => $chartLabels,
+                    'values' => $chartValues,
+                ],
+                'totalVisits' => $visitModel->getTotalVisitsAllTime((int) $website['id']),
+                'totalUniqueVisitors' => $visitModel->getTotalUniqueVisitorsAllTime((int) $website['id']),
+                'averageVisitsPerMonth' => $averageStats['average_visits'],
+                'averageUniqueVisitorsPerMonth' => $averageStats['average_unique_visitors'],
+                'visitsLastMonth' => $lastMonthStats['visits'],
+                'uniqueVisitorsLastMonth' => $lastMonthStats['unique_visitors'],
+            ];
+        }
 
         return view('dashboard/index', [
             'user' => $user,
             'fullName' => $userModel->getFullName($user),
+            'dashboardWebsites' => $dashboardWebsites,
         ]);
     }
 

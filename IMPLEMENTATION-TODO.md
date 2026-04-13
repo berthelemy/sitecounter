@@ -93,18 +93,19 @@ This file tracks progress for all implementation phases with manual verification
 - [ ] On the login page, ensure that the language selector has sufficient contrast with the background
 
 ## Phase 11: Dashboard improvements
-- [ ] On the dashboard, add a card for each tracked website showing the total number of unique visitors
-- [ ] On the dashboard, within the card for each tracked website show the average number of unique visitors per month
-- [ ] On the dashboard, within the card for each tracked website show the number of unique visitors last month
-- [ ] On the dashboard, within the card for each tracked website show the total number of visits
-- [ ] On the dashboard, within the card for each tracked website show the average number of visits per month
-- [ ] On the dashboard, within the card for each tracked website show the number of visits last month
-- [ ] On the reports page for each website show the total number of unique visitors
-- [ ] On the reports page for each website show the average number of unique visitors per month
-- [ ] On the reports page for each website show the number of unique visitors last month
-- [ ] On the reports page for each website show the total number of visits
-- [ ] On the reports page for each website show the average number of visits per month
-- [ ] On the reports page for each website show the number of visits last month
+- [x] On the dashboard remove the current navigation cards 
+- [x] On the dashboard, add a card for each tracked website showing a bar chart of visits over time
+- [x] On the dashboard, within the card for each tracked website show the average number of unique visitors per month
+- [x] On the dashboard, within the card for each tracked website show the number of unique visitors last month
+- [x] On the dashboard, within the card for each tracked website show the total number of visits
+- [x] On the dashboard, within the card for each tracked website show the average number of visits per month
+- [x] On the dashboard, within the card for each tracked website show the number of visits last month
+- [x] On the reports page for each website show the total number of unique visitors
+- [x] On the reports page for each website show the average number of unique visitors per month
+- [x] On the reports page for each website show the number of unique visitors last month
+- [x] On the reports page for each website show the total number of visits
+- [x] On the reports page for each website show the average number of visits per month
+- [x] On the reports page for each website show the number of visits last month
 
 ## Session Handoff (2026-04-04)
 

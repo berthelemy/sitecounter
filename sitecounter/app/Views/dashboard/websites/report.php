@@ -56,20 +56,52 @@
         </div>
 
         <!-- Summary cards -->
-        <div class="row mb-4">
-            <div class="col-md-6">
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-4 col-lg-2">
                 <div class="card text-center h-100">
                     <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.total_page_views') ?></h6>
-                        <p class="display-5 mb-0 fw-bold"><?= number_format($totalVisits) ?></p>
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.total_unique_visitors_all_time') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((int) $totalUniqueVisitorsAllTime) ?></p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-4 col-lg-2">
                 <div class="card text-center h-100">
                     <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.unique_visitors') ?></h6>
-                        <p class="display-5 mb-0 fw-bold"><?= number_format($uniqueVisitors) ?></p>
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.avg_unique_visitors_per_month') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((float) $averageUniqueVisitorsPerMonth, 1) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.unique_visitors_last_month') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((int) $uniqueVisitorsLastMonth) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.total_visits_all_time') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((int) $totalVisitsAllTime) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.avg_visits_per_month') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((float) $averageVisitsPerMonth, 1) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted"><?= lang('SiteCounter.report.visits_last_month') ?></h6>
+                        <p class="h3 mb-0 fw-bold"><?= number_format((int) $visitsLastMonth) ?></p>
                     </div>
                 </div>
             </div>
