@@ -334,7 +334,7 @@ class Website extends BaseController
 
         var text = document.createElement('p');
         text.style.margin = '0 0 12px';
-        text.textContent = 'I store a single cookie in your browser so that I can count the number of times you visit this site. I don't who you are, and don't use the cookie for any other purpose, nor is it sold or given to anyone else.';
+        text.textContent = 'I store a single cookie in your browser so that I can count the number of times you visit this site. I do not who you are, and do not use the cookie for any other purpose, nor is it sold or given to anyone else.';
 
         var buttonRow = document.createElement('div');
         buttonRow.style.display = 'flex';
