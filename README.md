@@ -3,7 +3,7 @@
 SiteCounter is a self-hosted website analytics tracker built with CodeIgniter 4 and Bootstrap 5.
 It lets an administrator register websites, install a small tracking snippet, and review visit and unique visitor trends.
 
-![Sitecounter screenshot in French](sitecounter-fr-screenshot.png)
+![Sitecounter screenshot in English](sitecounter-safe-en.png)
 
 ## Features
 
