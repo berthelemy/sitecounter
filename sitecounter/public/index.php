@@ -75,7 +75,9 @@ if (empty(getenv('SITECOUNTER_PATHS'))) {
     $dotEnvCandidates = [
         FCPATH . '../.env',
         FCPATH . '../sitecounter/.env',
+        FCPATH . '../sitecounter/sitecounter/.env',
         dirname(FCPATH, 2) . '/sitecounter/.env',
+        dirname(FCPATH, 2) . '/sitecounter/sitecounter/.env',
     ];
 
     foreach ($dotEnvCandidates as $dotEnvFile) {
@@ -133,9 +135,17 @@ if ($pathsConfig === null) {
     //   Web root:  /home/user/public_html/
     //   App root:  /home/user/sitecounter/app/
     //
-    // Candidate 3: sitecounter/ sits two levels above the web root
+    // Candidate 3: repository root sits one level above web root and app is in nested sitecounter/
+    //   Web root:  /home/user/public_html/
+    //   App root:  /home/user/sitecounter/sitecounter/app/
+    //
+    // Candidate 4: sitecounter/ sits two levels above the web root
     //   Web root:  /home/user/domains/example.com/public_html/
     //   App root:  /home/user/sitecounter/app/
+    //
+    // Candidate 5: repository root sits two levels above web root and app is in nested sitecounter/
+    //   Web root:  /home/user/domains/example.com/public_html/
+    //   App root:  /home/user/sitecounter/sitecounter/app/
     //
     // If none of these match your layout, either:
     //   a) Set the SITECOUNTER_PATHS environment variable (see README), or
@@ -143,7 +153,9 @@ if ($pathsConfig === null) {
     $candidates = [
         FCPATH . '../app/Config/Paths.php',           // Candidate 1 (see above)
         FCPATH . '../sitecounter/app/Config/Paths.php', // Candidate 2 (standard)
-        dirname(FCPATH, 2) . '/sitecounter/app/Config/Paths.php', // Candidate 3
+        FCPATH . '../sitecounter/sitecounter/app/Config/Paths.php', // Candidate 3
+        dirname(FCPATH, 2) . '/sitecounter/app/Config/Paths.php', // Candidate 4
+        dirname(FCPATH, 2) . '/sitecounter/sitecounter/app/Config/Paths.php', // Candidate 5
     ];
 
     foreach ($candidates as $candidate) {
