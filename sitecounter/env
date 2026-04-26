@@ -11,6 +11,16 @@
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
+# SITECOUNTER PATH OVERRIDE
+#--------------------------------------------------------------------
+# If auto-detection of app/Config/Paths.php fails (e.g. on a shared
+# host with a custom folder layout), set the absolute path here.
+# This is read before the framework loads, so it survives git pulls
+# without you needing to edit version-controlled files.
+#
+# SITECOUNTER_PATHS = /home/user/sitecounter/app/Config/Paths.php
+
+#--------------------------------------------------------------------
 # ENVIRONMENT
 #--------------------------------------------------------------------
 

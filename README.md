@@ -47,10 +47,100 @@ Use the standard secure layout:
 - Keep application files outside web root.
 - Copy the contents of sitecounter/public/ into public_html/.
 - Keep sitecounter/app/, sitecounter/writable/, sitecounter/vendor/, and other project files outside public_html/.
-- Adjust paths in public_html/index.php so framework and app paths resolve correctly.
+- Adjust paths in public_html/index.php so framework and app paths resolve correctly (see [Path Resolution in index.php](#path-resolution-in-indexphp) below).
 - Copy sitecounter/env to sitecounter/.env before running the web installer.
 - During installation, SiteCounter now auto-detects the current host/path and writes app.baseURL to .env.
 - After install, verify app.baseURL in .env matches your final public URL (with trailing slash), especially if you use subfolders or force HTTPS.
+
+## Path Resolution in index.php
+
+When `public/index.php` is copied to your web root (`public_html/`), it must locate `app/Config/Paths.php` so the framework can find all other directories.
+
+### How auto-detection works
+
+`index.php` tries three candidate paths in order, stopping at the first one that exists:
+
+| Candidate | Assumed layout |
+|-----------|----------------|
+| `../app/Config/Paths.php` | `app/` sits directly alongside the web root (folder renamed from `sitecounter/`) |
+| `../sitecounter/app/Config/Paths.php` | `sitecounter/` sits one level above the web root — **standard shared-hosting layout** |
+| `../../sitecounter/app/Config/Paths.php` | `sitecounter/` sits two levels above the web root (e.g. `domains/example.com/public_html/`) |
+
+For the standard shared-hosting layout your folder tree should look like:
+
+```
+/home/user/
+├── public_html/          ← web root (contents of sitecounter/public/ go here)
+│   ├── index.php
+│   ├── robots.txt
+│   └── js/
+└── sitecounter/          ← application root (outside web root)
+    ├── .env
+    ├── app/
+    ├── vendor/
+    └── writable/
+```
+
+### What Paths.php controls
+
+Once located, `app/Config/Paths.php` tells the framework where to find three directories. All paths are relative to `Paths.php`'s own location (`app/Config/`) using `__DIR__`, so they resolve correctly as long as `Paths.php` itself is found:
+
+| Property | Default value (relative to `app/Config/`) | Resolves to |
+|----------|------------------------------------------|-------------|
+| `$systemDirectory` | `../../vendor/codeigniter4/framework/system` | `sitecounter/vendor/codeigniter4/framework/system` |
+| `$appDirectory` | `..` | `sitecounter/app/` |
+| `$writableDirectory` | `../../writable` | `sitecounter/writable/` |
+
+You only need to edit `Paths.php` if you move those folders to a non-default location.
+
+### When auto-detection fails
+
+If your host uses a different folder structure, choose one of these options **in order of preference**:
+
+**Option A — Set the path in `.env` (recommended — survives git pulls)**
+
+Open `sitecounter/.env` and uncomment/add:
+
+```
+SITECOUNTER_PATHS = /home/user/sitecounter/app/Config/Paths.php
+```
+
+This is read by `index.php` before the framework loads, so it is never overwritten by a `git pull`. The `env` template includes this key commented out as a reminder.
+
+**Option B — Set a server environment variable**
+
+In your host control panel or `.htaccess`, set:
+
+```
+SITECOUNTER_PATHS=/absolute/path/to/sitecounter/app/Config/Paths.php
+```
+
+Example `.htaccess` directive:
+
+```apache
+SetEnv SITECOUNTER_PATHS /home/user/sitecounter/app/Config/Paths.php
+```
+
+**Option C — Add a candidate to index.php**
+
+Open `public_html/index.php` and find the `$candidates` array (look for the comment `Auto-detection: SiteCounter tries the three most common folder layouts`). Add your path as a new entry:
+
+```php
+$candidates = [
+    FCPATH . '../app/Config/Paths.php',
+    FCPATH . '../sitecounter/app/Config/Paths.php',
+    dirname(FCPATH, 2) . '/sitecounter/app/Config/Paths.php',
+    '/home/user/custom-location/sitecounter/app/Config/Paths.php', // add your path here
+];
+```
+
+**Option D — Hardcode the path at the top of index.php**
+
+If none of the above options are possible, replace the entire auto-detection block with a single line immediately above the `require $pathsConfig;` call:
+
+```php
+$pathsConfig = '/home/user/sitecounter/app/Config/Paths.php';
+```
 
 ## Configuration Notes
 
@@ -119,9 +209,8 @@ Use this checklist if you are redirected to localhost or see:
 
 - Verify public_html/index.php points to the correct app, system, and writable paths outside web root.
 - Wrong paths can make the app load the wrong root and miss .env.
-- SiteCounter now checks common layouts automatically, but if your host uses a custom layout, set a server env var:
-	SITECOUNTER_PATHS=/absolute/path/to/sitecounter/app/Config/Paths.php
-- If you cannot set env vars in your host panel, edit public_html/index.php and hardcode the correct Paths.php path.
+- SiteCounter checks common layouts automatically, but if your host uses a custom layout the recommended fix is to set `SITECOUNTER_PATHS` in `sitecounter/.env` (see [Path Resolution in index.php](#path-resolution-in-indexphp)).
+- This value is read before the framework loads and is never overwritten by a git pull.
 
 5. Confirm URL rewriting
 
