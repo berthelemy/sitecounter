@@ -73,13 +73,29 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header">
                         <h5><?= lang('SiteCounter.websites.tracking_script') ?></h5>
-                        <button id="copyButton" class="btn btn-sm btn-outline-primary"><i class="bi bi-clipboard me-1"></i><?= lang('SiteCounter.websites.copy_script') ?></button>
                     </div>
                     <div class="card-body">
                         <p class="text-muted"><?= lang('SiteCounter.websites.tracking_help') ?></p>
-                        <pre id="trackingScript" class="bg-light p-3 rounded"><code><?= htmlspecialchars($trackingScript) ?></code></pre>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0"><?= lang('SiteCounter.websites.tracking_script_short_title') ?></h6>
+                                <button class="btn btn-sm btn-outline-primary copy-script-button" data-target="trackingScriptShort"><i class="bi bi-clipboard me-1"></i><?= lang('SiteCounter.websites.copy_script') ?></button>
+                            </div>
+                            <pre id="trackingScriptShort" class="bg-light p-3 rounded mb-0"><code><?= htmlspecialchars($trackingScripts['short']) ?></code></pre>
+                            <p class="small text-muted mt-2 mb-0"><?= lang('SiteCounter.websites.tracking_script_short_help') ?></p>
+                        </div>
+
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0"><?= lang('SiteCounter.websites.tracking_script_explicit_title') ?></h6>
+                                <button class="btn btn-sm btn-outline-primary copy-script-button" data-target="trackingScriptExplicit"><i class="bi bi-clipboard me-1"></i><?= lang('SiteCounter.websites.copy_script') ?></button>
+                            </div>
+                            <pre id="trackingScriptExplicit" class="bg-light p-3 rounded mb-0"><code><?= htmlspecialchars($trackingScripts['explicit']) ?></code></pre>
+                            <p class="small text-muted mt-2 mb-0"><?= lang('SiteCounter.websites.tracking_script_explicit_help') ?></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,25 +104,32 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('copyButton').addEventListener('click', function() {
-            const scriptElement = document.getElementById('trackingScript');
-            const textArea = document.createElement('textarea');
-            textArea.value = scriptElement.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
+        document.querySelectorAll('.copy-script-button').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const scriptElement = document.getElementById(targetId);
+                if (!scriptElement) {
+                    return;
+                }
 
-            // Change button text temporarily
-            const originalText = this.textContent;
-            this.textContent = <?= json_encode(lang('SiteCounter.websites.copied')) ?>;
-            this.classList.remove('btn-outline-primary');
-            this.classList.add('btn-success');
-            setTimeout(() => {
-                this.textContent = originalText;
-                this.classList.remove('btn-success');
-                this.classList.add('btn-outline-primary');
-            }, 2000);
+                const textArea = document.createElement('textarea');
+                textArea.value = scriptElement.textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                // Change button text temporarily
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check me-1"></i>' + <?= json_encode(lang('SiteCounter.websites.copied')) ?>;
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-success');
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-primary');
+                }, 2000);
+            });
         });
     </script>
 </body>

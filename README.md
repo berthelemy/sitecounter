@@ -59,6 +59,38 @@ Use the standard secure layout:
 
   CI_ENVIRONMENT = production
 
+## Tracking Cookie and Local Storage Behavior
+
+SiteCounter's client tracker stores two small browser values to manage consent and visitor counting:
+
+- Cookie: `sitecounter_visitor_id`
+	- Purpose: stores an anonymous UUID used to count unique visitors.
+	- Lifetime: up to 365 days (best effort; browser/privacy settings may shorten or block it).
+	- Scope: current site path (`/`).
+
+- Local storage key: `sitecounter_cookie_consent`
+	- Values: `allow` or `deny`.
+	- Purpose: remembers the visitor's consent choice for the cookie banner.
+
+Consent flow summary:
+
+1. On first visit, no consent value exists, so the banner is shown.
+2. If visitor clicks Allow cookie:
+	 - `sitecounter_cookie_consent=allow` is saved in localStorage.
+	 - `sitecounter_visitor_id` cookie is created (or refreshed) and tracking request is sent.
+3. If visitor clicks Decline:
+	 - `sitecounter_cookie_consent=deny` is saved.
+	 - No visitor cookie is created and no tracking request is sent.
+
+Reset behavior:
+
+- If cookies are deleted but localStorage remains:
+	- SiteCounter now asks for consent again before creating a new visitor cookie.
+- If localStorage is deleted but cookie remains:
+	- Consent banner is shown again, and user must choose Allow/Decline.
+- If both are deleted:
+	- Behavior is the same as a first-time visitor.
+
 ## Shared Hosting Troubleshooting Checklist
 
 Use this checklist if you are redirected to localhost or see:
