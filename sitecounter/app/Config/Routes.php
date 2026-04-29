@@ -45,7 +45,12 @@ $routes->options('/track', 'Track::options');
 // On a fresh install, Shield settings tables may not exist yet.
 // Skip registering auth routes until the database is ready.
 try {
-	service('auth')->routes($routes);
+	service('auth')->routes($routes, ['except' => ['login']]);
+
+	// Custom login routes to guard against duplicate login submissions
+	// when the session already contains user info.
+	$routes->get('login', 'Auth\\LoginController::loginView', ['as' => 'login']);
+	$routes->post('login', 'Auth\\LoginController::loginAction');
 } catch (\Throwable $e) {
 	log_message('debug', 'Skipping auth routes before installation: {message}', ['message' => $e->getMessage()]);
 }
